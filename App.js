@@ -1,12 +1,11 @@
 import React from 'react';
 import { View } from 'react-native'
-import Login from './screens/Login';
+import Notificar from './src/screens/notificar/Notificar';
 
 export default function App() {
   return (
     <View>
-      <Login />
-      
+      <Notificar />
     </View>
   );
 }

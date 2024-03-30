@@ -1,46 +1,42 @@
 import styled from 'styled-components/native';
 
-// Inicio screen Login
 export const Container = styled.View`
   display: flex;
   flex-direction: column;
-  gap: 160px;
+  gap: 50px;
   background-color: #fff;
-  justify-content: center;
   align-items: center;
   flex: 1;
   width: 100vw;
-  border: 1px solid black;
 `;
 
 export const Title = styled.Text`
-  font-size: 2.8rem;
+  margin-top: 2rem;
+  font-size: 2.5rem;
 `;
 
-export const Wrapper = styled.View`
+export const InputsWrapper = styled.View`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 1.4rem;
   background-color: #fff;
 `;
 
-export const ButtonLink = styled.TouchableOpacity`
-  width: 180px;
+export const Input = styled.TextInput`
+  padding-bottom: 0.3rem;
+	border-color: #000;
+	border-bottom-width: 2px;
+	outline-width: 0;
+	color: #000;
+`;
+
+export const ButtonEnviar = styled.TouchableOpacity`
+  width: 80vw;
   display: flex;
   justify-content: center;
   align-items: center;
-`;
-
-export const TextLink = styled.Text`
-  font-size: 1.8rem;
-`;
-
-export const Button = styled.TouchableOpacity`
-  width: 180px;
-  border: 3px solid #333;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background-color: #00f30c;
+  border-radius: 3px;
 `;
 
 export const TextButton = styled.Text`
@@ -48,4 +44,3 @@ export const TextButton = styled.Text`
     color: #000;
     padding: 5px;
 `;
-// Fim Login

@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 export const Container = styled.View`
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 2rem;
   background-color: #fff;
   align-items: center;
   flex: 1;
@@ -11,8 +11,10 @@ export const Container = styled.View`
 `;
 
 export const Title = styled.Text`
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   font-size: 2.5rem;
+  width: 90vw;
+  text-align: center;
 `;
 
 export const InputsWrapper = styled.View`
@@ -20,6 +22,7 @@ export const InputsWrapper = styled.View`
   flex-direction: column;
   gap: 1.4rem;
   background-color: #fff;
+  width: 90vw;
 `;
 
 export const Input = styled.TextInput`
@@ -31,11 +34,11 @@ export const Input = styled.TextInput`
 `;
 
 export const ButtonEnviar = styled.TouchableOpacity`
-  width: 80vw;
+  width: 90vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #00f30c;
+  background-color: #333;
   border-radius: 3px;
 `;
 

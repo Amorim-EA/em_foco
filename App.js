@@ -1,11 +1,11 @@
 import React from 'react';
 import { View } from 'react-native'
-import Notificar from './src/screens/notificar/Notificar';
+import { StackRoutes } from './src/routes/StackRoutes';
 
 export default function App() {
   return (
     <View>
-      <Notificar />
+      <StackRoutes />
     </View>
   );
 }

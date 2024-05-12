@@ -13,6 +13,7 @@ export const Container = styled.View`
 
 export const Title = styled.Text`
   font-size: 2.8rem;
+  letter-spacing: 3px;
 `;
 
 export const LinksPagesWrapper = styled.View`
@@ -38,6 +39,7 @@ export const LinkButton = styled.TouchableOpacity`
 
 export const TextLink = styled.Text`
   font-size: 1.8rem;
+  letter-spacing: 1px;
 `;
 
 export const AuthButton = styled.TouchableOpacity`

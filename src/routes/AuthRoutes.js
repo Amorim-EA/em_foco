@@ -1,12 +1,12 @@
 import { createStackNavigator } from "@react-navigation/stack"
 import React from 'react';
-import { Login } from '../screens/login/Login';
-import { Sobre } from '../screens/sobre/Sobre';
-import { Contato } from '../screens/contato/Contato';
+import { Login } from '../screens/login';
+import { Sobre } from '../screens/sobre';
+import { Contato } from '../screens/contato';
 
 const Stack = createStackNavigator();
 
-export default function AuthStack() {
+export default function AuthRoutes() {
   	return(
   	    <Stack.Navigator>
             <Stack.Screen name="Login" component={Login} />

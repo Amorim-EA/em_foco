@@ -4,7 +4,6 @@ import * as S from './style';
 export default function Sobre() {
   return (
       <S.Container>
-          <S.Title>Sobre Nós</S.Title>
           <S.Paragrafo>
             Olá! Somos a equipe de desenvolvimento do aplicativo para mapeamento de focos da dengue, comprometidos em utilizar a tecnologia para combater a propagação da dengue em nossa comunidade. Nossa equipe é composta pelo professor orientador e dois estudantes do Instituto Federal de Mato Grosso do Sul (IFMS).
           </S.Paragrafo>

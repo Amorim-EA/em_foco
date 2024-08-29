@@ -4,7 +4,6 @@ import * as S from './style';
 export default function Contato() {
   return (
       <S.Container>
-          <S.Title>Contato</S.Title>
           <S.InputsWrapper>
               <S.Input
                 placeholder="Nome"
@@ -15,8 +14,10 @@ export default function Contato() {
               <S.Input
                 placeholder="Assunto"
               />
-              <S.Input
-                placeholder="Mensagem"
+              <S.TextArea
+                placeholder="Escreva uma breve mensagem"
+                multiline={true}
+                numberOfLines={4}
               />
               <S.ButtonEnviar>
                   <S.TextButton>Enviar Mensagem</S.TextButton>

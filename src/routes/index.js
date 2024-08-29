@@ -1,11 +1,10 @@
 import React from 'react';
-import { useAuth } from '../contexts/AuthContext'
-import { AppRoutes } from './AppRoutes'
-import { AuthRoutes } from './AuthRoutes'
+import AppRoutes from './AppRoutes';
+import AuthRoutes from './AuthRoutes';
 
 export default function Routes() {
-    const { logado } = useAuth()
+    const logado = false;
     return(
-     	       logado ? <AppStack /> : <AuthStack /> 
+        logado ? <AppRoutes /> : <AuthRoutes />
     )
 }

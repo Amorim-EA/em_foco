@@ -7,18 +7,13 @@ export const Container = styled.View`
   background-color: #fff;
   align-items: center;
   flex: 1;
-  width: 100vw;
-`;
-
-export const Title = styled.Text`
-  margin-top: 1.5rem;
-  font-size: 2.5rem;
-  letter-spacing: 2px;
+  padding-top: 1rem;
+  width: 100%;
 `;
 
 export const Paragrafo = styled.Text`
-  font-size: 0.92rem;
-  width: 90vw;
+  font-size: 0.9rem;
+  width: 90%;
   text-align: justify;
   letter-spacing: 0.5px;
 `;
@@ -42,7 +37,7 @@ export const WrapperCards = styled.View`
 export const TitleTime = styled.Text`
   font-size: 1.2rem;
   text-align: center;
-  letter-spacing: 1px;
+  letter-spacing: 0.9px;
 `;
 
 export const Card = styled.View`
@@ -50,7 +45,6 @@ export const Card = styled.View`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: px;
   width: 100px;
   background-color: #fff;
 `;
@@ -64,9 +58,9 @@ export const Imagem = styled.Image`
 `;
 
 export const Nome = styled.Text`
-  font-size: 1rem;
+  font-size: 0.9rem;
 `;
 
 export const Funcao = styled.Text`
-  font-size: 0.6rem;
+  font-size: 0.7rem;
 `;

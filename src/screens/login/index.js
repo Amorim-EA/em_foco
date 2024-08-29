@@ -4,12 +4,12 @@ import * as S from './style';
 export default function Login() {
   return (
       <S.Container>
-          <S.Title>Em foco!</S.Title>
+          <S.Title>Em Foco!</S.Title>
           <S.LinksPagesWrapper>
-              <S.LinkButton>
+              <S.LinkButton  to={{ screen: 'Sobre'}}>
                   <S.TextLink>Sobre</S.TextLink>
               </S.LinkButton>
-              <S.LinkButton>
+              <S.LinkButton to={{ screen: 'Contato'}}>
                   <S.TextLink>Contato</S.TextLink>
               </S.LinkButton>
           </S.LinksPagesWrapper>

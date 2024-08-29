@@ -1,5 +1,5 @@
+import CheckBox from 'react-native-checkbox';
 import styled from 'styled-components/native';
-import { CheckBox } from 'react-native';
 
 export const Container = styled.View`
   display: flex;
@@ -8,7 +8,7 @@ export const Container = styled.View`
   background-color: #fff;
   align-items: center;
   flex: 1;
-  width: 100vw;
+  width: 100%;
 `;
 
 export const Title = styled.Text`
@@ -38,7 +38,7 @@ export const CheckBoxWrapper = styled.View`
   flex-direction: row;
   align-items: center;
   background-color: #fff;
-  width: 90vw;
+  width: 90%;
 `;
 
 export const Label = styled.Text`
@@ -49,7 +49,7 @@ export const TextArea = styled.TextInput`
 	background-color: #E5E5E5;
 	outline-width: 0;
 	color: #000;
-	width: 90vw;
+	width: 90%;
   text-align-vertical: top;
   padding: 3px;
 `;
@@ -64,13 +64,13 @@ export const Input = styled.TextInput`
 	background-color: #E5E5E5;
 	outline-width: 0;
 	color: #000;
-	width: 90vw;
+	width: 90%;
   padding: 3px;
 `;
 
 export const Mapa = styled.View`
 	background-color: #E5E5E5;
-	width: 90vw;
+	width: 90%;
 	height: 12rem;
 	display: flex;
 	justify-content: center;
@@ -78,7 +78,7 @@ export const Mapa = styled.View`
 `;
 
 export const TirarFotoButton = styled.TouchableOpacity`
-  width: 90vw;
+  width: 90%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -87,7 +87,7 @@ export const TirarFotoButton = styled.TouchableOpacity`
 `;
 
 export const UploadFotosButton = styled.TouchableOpacity`
-  width: 90vw;
+  width: 90%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -96,10 +96,10 @@ export const UploadFotosButton = styled.TouchableOpacity`
 `;
 
 export const FotosWrapper = styled.View`
-  width: 90vw;
+  width: 90%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px
+  gap: 10px;
 `;
 
 export const Foto = styled.Image`
@@ -108,7 +108,7 @@ export const Foto = styled.Image`
 `;
 
 export const NotificarButton = styled.TouchableOpacity`
-  width: 90vw;
+  width: 90%;
   display: flex;
   justify-content: center;
   align-items: center;

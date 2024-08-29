@@ -8,7 +8,7 @@ export const Container = styled.View`
   justify-content: center;
   align-items: center;
   flex: 1;
-  width: 100vw;
+  width: 100%;
 `;
 
 export const Title = styled.Text`

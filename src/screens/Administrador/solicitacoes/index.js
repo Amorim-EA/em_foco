@@ -38,6 +38,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    fontWeight: ""
+    fontWeight: "600"
   },
 })

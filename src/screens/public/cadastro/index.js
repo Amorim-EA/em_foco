@@ -28,7 +28,7 @@ export default function Cadastro({ navigation }) {
         email: email,
         password: password,
         cpf: cpf,
-        solicitado: isSelected,
+        solicited: isSelected,
       };
 
       try {

@@ -45,7 +45,7 @@ const userToAgent = async (email) => {
     const responseOfAPI = await fetch(`${url}/user/request`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(email),
+      body: JSON.stringify(objt),
     });
     const userCreated = await responseOfAPI.json();
     return userCreated;

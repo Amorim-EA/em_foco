@@ -1,38 +1,24 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import Button from '../../../components/Button';
 import InputText from '../../../components/InputText';
-import { handlerAuth } from '../../../functions/handlerAuth';
-import storeData from '../../../functions/handleStoreDataLocal';
 
 export default function Autenticar({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorEmail, setErrorEmail] = useState('');
   const [errorPassword, setErrorPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
     if (validar()) {
       try {
-        setIsLoading(true);
         const user = { 
           email: email, 
           password: password 
         };
-        const userAuth = await handlerAuth(user);
-  
-        if (userAuth && userAuth.token) {
-          await storeData('usuario', JSON.stringify(userAuth));
-        } else {
-          Alert.alert('Erro', 'Falha na autenticação. Verifique suas credenciais.');
-        }
-  
       } catch (error) {
         console.log(error);
-        Alert.alert('Erro', 'Ocorreu um erro durante o login. Tente novamente mais tarde.');
       } finally {
-        setIsLoading(false);
       }
     }
   };

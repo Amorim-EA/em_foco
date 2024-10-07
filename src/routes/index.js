@@ -30,8 +30,8 @@ export default function Routes() {
         return <Text>Loading...</Text>;
     }
 
-    const isAdm = user?.email === "emfoco.dengue@gmail.com";
-    const isAgent = user?.agente === true; */
+    const isAdm = user?.type === "admin";
+    const isAgent = user?.type === "agente"; */
     const isLogado = true;
 
     return (

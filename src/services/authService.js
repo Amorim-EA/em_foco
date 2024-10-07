@@ -1,6 +1,6 @@
-import { getUserAuthenticated } from './handlerAcessApi';
+import { getUserAuthenticated } from './apiUser';
 
-const handlerAuth = async (user, navigation) => {
+const authService = async (user, navigation) => {
   try {
     const userAuth = await getUserAuthenticated(user);
   } catch (error) {
@@ -9,4 +9,4 @@ const handlerAuth = async (user, navigation) => {
   }
  } 
 
-export { handlerAuth };
+export { authService };

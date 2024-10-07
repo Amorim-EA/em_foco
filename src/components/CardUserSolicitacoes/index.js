@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { userToAgent } from '../../functions/handlerAcessApi';
+import { userToAgent } from '../../services/api-user';
 
 const CardUserSolicitado = ({ name, email, index }) => {
   const aceitarSolicitacao = async () => {
@@ -19,7 +19,7 @@ const CardUserSolicitado = ({ name, email, index }) => {
       <View style={styles.buttonWrapper}>
         <Pressable
           style={[styles.button, { backgroundColor: '#e0f8e9' }]}
-          onPress={aceitarSolicitacao}
+          onPress={() => aceitarSolicitacao}
         >
           <Feather name="check" size={24} color="green" />
         </Pressable>

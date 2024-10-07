@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '../../../components/Button';
 import InputText from '../../../components/InputText';
+import { AuthContext } from '../../../contexts/AuthContext';
 
 export default function Autenticar({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorEmail, setErrorEmail] = useState('');
   const [errorPassword, setErrorPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { login } = useContext(AuthContext);
 
   const handleLogin = async () => {
     if (validar()) {
@@ -16,9 +20,13 @@ export default function Autenticar({ navigation }) {
           email: email, 
           password: password 
         };
+        setIsLoading(true);
+        await login(user);
+        
       } catch (error) {
         console.log(error);
       } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -61,7 +69,7 @@ export default function Autenticar({ navigation }) {
         />
       <Button
         texto={isLoading ? "Carregando..." : "Entrar"}
-        onPress={handleLogin} 
+        onPress={handleLogin}  // Remova a função anonima e passe a função diretamente
         style={styles.buttonBlue} 
         textStyle={styles.buttonText} 
         disabled={isLoading}

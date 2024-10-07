@@ -37,7 +37,7 @@ export default function AuthNavigator() {
                 options={{
                     headerShown: true,
                     headerShadowVisible: false,
-                    title: 'Sobre Nós',
+                    title: '',
                     headerTitleAlign: 'center',
                     headerTitleStyle: {
                         fontSize: 22,

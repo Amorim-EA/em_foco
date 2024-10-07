@@ -1,7 +1,6 @@
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import Home from '../screens/Agente/home';
-
+import Home from '../screens/private/home/index';
 import Contato from '../screens/public/contato';
 import Sobre from '../screens/public/sobre';
 

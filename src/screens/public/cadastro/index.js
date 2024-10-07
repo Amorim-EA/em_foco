@@ -8,7 +8,7 @@ import {
 import { CheckBox } from 'react-native-elements';
 import Button from '../../../components/Button';
 import InputText from '../../../components/InputText';
-import { postUser } from '../../../functions/handlerAcessApi';
+import { postUser } from '../../../services/apiUser';
 
 export default function Cadastro({ navigation }) {
   const [name, setName] = useState('');
@@ -51,6 +51,11 @@ export default function Cadastro({ navigation }) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const cpfRegex = /^\d{11}$/;
 
+    if (!name) {
+      setErrorName('Preencha o nome');
+      error = true;
+    }
+
     if (!emailRegex.test(email)) {
       setErrorEmail('Preencha seu e-mail corretamente');
       error = true;
@@ -72,7 +77,10 @@ export default function Cadastro({ navigation }) {
         <Text style={styles.titulo}>Cadastrar-se</Text>
         <InputText
           placeholder="Nome"
-          onChangeText={setName}
+          onChangeText={value => {
+            setName(value);
+            setErrorName('');
+          }}
           errorMessage={errorName}
         />
         <InputText
@@ -85,7 +93,7 @@ export default function Cadastro({ navigation }) {
           errorMessage={errorEmail}
         />
         <InputText
-          placeholder="CPF"
+          placeholder="CPF (somente numeros sem .)"
           onChangeText={value => {
             setCpf(value);
             setErrorCpf('');
@@ -117,8 +125,8 @@ export default function Cadastro({ navigation }) {
           textStyle={styles.buttonText} 
         />
         <Button 
-          texto="Já tenho cadastro!" 
-          onPress={() => navigation.navigate('Autenticar')}
+          texto="Voltar ao inicio" 
+          onPress={() => navigation.navigate('Inicio')}
           style={styles.buttonred} 
           textStyle={styles.buttonText} 
         />

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import CardUserSolicitado from '../../../components/CardUserSolicitacoes';
-import { getUsersSolicitado } from '../../../functions/handlerAcessApi';
+import { getUsersSolicitado } from '../../../services/apiUser';
 
 export default function Solicitacoes() {
   const [users, setUsers] = useState([]);

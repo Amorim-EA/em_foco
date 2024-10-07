@@ -1,15 +1,18 @@
 {
   "expo": {
-    "name": "em foco",
-    "slug": "em foco",
+    "name": "emfoco",
+    "slug": "emfoco",
     "version": "1.0.0",
-    "sdkVersion": "51.0.0",
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./src/assets/image.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/icon.png",
+      "image": ".src//assets/image.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -20,13 +23,18 @@
       "supportsTablet": true
     },
     "android": {
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBvx6yEfGsbnW9wFa_HFfCT4Guk4mtpVgc" 
+        }
+      },
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./src/assets/image.png",
         "backgroundColor": "#ffffff"
       }
     },
     "web": {
-      "favicon": "/assets/icon.png"
+      "favicon": "./src/assets/image.png"
     }
   }
 }

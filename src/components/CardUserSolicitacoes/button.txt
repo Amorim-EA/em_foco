@@ -1,0 +1,6 @@
+        <Pressable
+          style={[styles.button, { backgroundColor: '#fde5e7' }]}
+          onPress={() => {}}
+        >
+          <Feather name="x" size={24} color="red" />
+        </Pressable>

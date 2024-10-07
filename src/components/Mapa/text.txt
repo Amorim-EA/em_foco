@@ -1,0 +1,64 @@
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Platform } from 'react-native';
+import { MapContainer, TileLayer } from 'react-leaflet';
+import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+
+const Mapa = ({ latitude, longitude }) => {
+  const localizacao = {
+    latitude: latitude,
+    longitude: longitude,
+  };
+  return (
+  <>
+ {Platform.OS === 'web' ? (
+        <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: '100%', width: '100%' }}>
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+        </MapContainer>
+
+
+
+
+
+    <View style={styles.card}>
+      <MapView
+        style={styles.map}
+        initialRegion={{
+          latitude: -22.238,
+          longitude: -53.3437,
+          latitudeDelta: 0.04,
+          longitudeDelta: 0.04,
+        }}
+        provider={PROVIDER_GOOGLE}
+      >
+        <React.Fragment>
+          <Marker
+            coordinate={localizacao}
+            title={`Você está aqui`}
+            description={`cadastrando foco neste local`}
+          />
+          <Circle
+            center={localizacao}
+            radius={10}
+            strokeColor="rgba(255, 0, 0, 1)"
+            fillColor="rgba(255, 0, 0, 0.5)"
+          />
+        </React.Fragment>
+      </MapView>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  card: {
+
+  },
+  map: {
+    width: '90%',
+    height: '50%'
+  }
+});
+
+export default Mapa;

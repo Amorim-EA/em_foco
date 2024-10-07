@@ -1,0 +1,135 @@
+
+
+
+import { Feather } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import React, { useState } from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
+import ButtonIcon from '../ButtonIcon';
+
+export default function CameraGaleria( ) {
+  const [imageUris, setImageUris] = useState([]);
+  const [cameraPermission, setCameraPermission] = useState(null);
+  const [galleryPermission, setGalleryPermission] = useState(null);
+
+  const requestCameraPermission = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    setCameraPermission(status === 'granted');
+    if (status !== 'granted') {
+      Alert.alert('Você precisa conceder permissão para usar a câmera!');
+    }
+    return status === 'granted';
+  };
+
+  const requestGalleryPermission = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    setGalleryPermission(status === 'granted');
+    if (status !== 'granted') {
+      Alert.alert('Você precisa conceder permissão para acessar a galeria!');
+    }
+    return status === 'granted';
+  };
+
+  const adicionarImagem = (uri) => {
+    if (imageUris.length < 2) {
+      setImageUris((prev) => [...prev, uri]);
+      onCapture((prev) => [...prev, uri])
+    }
+  };
+
+  const obterImagemCam = async () => {
+    const hasPermission = cameraPermission || await requestCameraPermission();
+    if (hasPermission) {
+      const result = await ImagePicker.launchCameraAsync();
+      if (!result.canceled) {
+        const uri = result.assets[0]?.uri;
+        if (uri) {
+          adicionarImagem(uri);
+        } else {
+          Alert.alert('Erro ao obter a URI da imagem da câmera.');
+        }
+      }
+    }
+  };
+
+  const obterImagemGaleria = async () => {
+    const hasPermission = galleryPermission || await requestGalleryPermission();
+    if (hasPermission) {
+      const result = await ImagePicker.launchImageLibraryAsync();
+      if (!result.canceled) {
+        const uri = result.assets[0]?.uri;
+        if (uri) {
+          adicionarImagem(uri);
+        } else {
+          Alert.alert('Erro ao obter a URI da imagem da galeria.');
+        }
+      }
+    }
+  };
+
+  const verificarLimiteEExecutar = (callback) => {
+    if (imageUris.length >= 2) {
+      Alert.alert('Você só pode adicionar até duas imagens.');
+    } else {
+      callback();
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <ButtonIcon
+          texto="Tirar foto"
+          icon={<Feather name="camera" size={24} color="white" />}
+          onPress={verificarLimiteEExecutar(obterImagemCam)} 
+          style={styles.buttonBlue} 
+          textStyle={styles.buttonText} 
+        />
+      <ButtonIcon
+          texto="Fazer upload"
+          icon={<Feather name="camera" size={24} color="white" />}
+          onPress={verificarLimiteEExecutar(obterImagemGaleria)} 
+          style={styles.buttonBlue}
+          textStyle={styles.buttonText} 
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ecf0f1',
+    padding: 8,
+    width: '100%',
+  },
+  imageContainer: {
+    width: '95%',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  image: {
+    width: '40%',
+    height: 150,
+  },
+  // com icone
+  buttonBlue: {
+    width: '40&',
+    padding: 12,
+    backgroundColor: '#1351b4',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonRed: {
+    width: '100%',
+    padding: 8,
+    backgroundColor: '#dc3545',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
+}
+});

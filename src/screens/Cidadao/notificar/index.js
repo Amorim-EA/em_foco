@@ -6,90 +6,100 @@ import { CheckBox } from 'react-native-elements';
 import Button from '../../../components/Button';
 import ButtonIcon from '../../../components/ButtonIcon';
 import RederizarMapa from '../../../components/Mapa';
+import { postFoco } from '../../../services/apiFoco'; // Importe sua função para enviar os dados
 
 export default function Notificar() {
-    const [descricao, setDescricao] = useState('');
-    const [isSelected, setIsSelected] = useState(false); 
-
-
-    //Cam
-    const [imageUris, setImageUris] = useState([]);
-    const [cameraPermission, setCameraPermission] = useState(null);
-    const [galleryPermission, setGalleryPermission] = useState(null);
+    const [foco, setFoco] = useState({
+        descricao: '',
+        longitude: '',
+        latitude: '',
+        cidadao: '',
+        imageUri: null,
+        isSelected: false,
+    });
 
     const requestCameraPermission = async () => {
         const { status } = await ImagePicker.requestCameraPermissionsAsync();
-        setCameraPermission(status === 'granted');
         if (status !== 'granted') {
-          Alert.alert('Você precisa conceder permissão para usar a câmera!');
+            Alert.alert('Você precisa conceder permissão para usar a câmera!');
         }
         return status === 'granted';
-      };
-    
-      const requestGalleryPermission = async () => {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        setGalleryPermission(status === 'granted');
-        if (status !== 'granted') {
-          Alert.alert('Você precisa conceder permissão para acessar a galeria!');
-        }
-        return status === 'granted';
-      };
-    
-      const adicionarImagem = (uri) => {
-        if (imageUris.length < 2) {
-          setImageUris((prev) => [...prev, uri]);
-        }
-      };
-    
-      const obterImagemCam = async () => {
-        const hasPermission = cameraPermission || await requestCameraPermission();
-        if (hasPermission) {
-          const result = await ImagePicker.launchCameraAsync();
-          if (!result.canceled) {
-            const uri = result.assets[0]?.uri;
-            if (uri) {
-              adicionarImagem(uri);
-            } else {
-              Alert.alert('Erro ao obter a URI da imagem da câmera.');
-            }
-          }
-        }
-      };
-    
-      const obterImagemGaleria = async () => {
-        const hasPermission = galleryPermission || await requestGalleryPermission();
-        if (hasPermission) {
-          const result = await ImagePicker.launchImageLibraryAsync();
-          if (!result.canceled) {
-            const uri = result.assets[0]?.uri;
-            if (uri) {
-              adicionarImagem(uri);
-            } else {
-              Alert.alert('Erro ao obter a URI da imagem da galeria.');
-            }
-          }
-        }
-      };
-    
-      const removerImagem = (uri) => {
-        setImageUris((prev) => prev.filter((imageUri) => imageUri !== uri));
-      };
-    
-      const verificarLimiteEExecutar = (callback) => {
-        if (imageUris.length >= 2) {
-          Alert.alert('Você só pode adicionar até duas imagens.');
-        } else {
-          callback();
-        }
-      };
-      // Final Cam
+    };
 
-    const handle = () => {
-        return null;
+    const requestGalleryPermission = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Você precisa conceder permissão para acessar a galeria!');
+        }
+        return status === 'granted';
+    };
+
+    const adicionarImagem = (uri) => {
+        setFoco((prev) => ({ ...prev, imageUri: uri }));
+    };
+
+    const obterImagemCam = async () => {
+        const hasPermission = await requestCameraPermission();
+        if (hasPermission) {
+            const result = await ImagePicker.launchCameraAsync();
+            if (!result.canceled) {
+                const uri = result.assets[0]?.uri;
+                if (uri) {
+                    adicionarImagem(uri);
+                } else {
+                    Alert.alert('Erro ao obter a URI da imagem da câmera.');
+                }
+            }
+        }
+    };
+
+    const obterImagemGaleria = async () => {
+        const hasPermission = await requestGalleryPermission();
+        if (hasPermission) {
+            const result = await ImagePicker.launchImageLibraryAsync();
+            if (!result.canceled) {
+                const uri = result.assets[0]?.uri;
+                if (uri) {
+                    adicionarImagem(uri);
+                } else {
+                    Alert.alert('Erro ao obter a URI da imagem da galeria.');
+                }
+            }
+        }
+    };
+
+    const removerImagem = () => {
+        setFoco((prev) => ({ ...prev, imageUri: null })); // Remove a imagem
+    };
+
+    const handle = async () => {
+        const { descricao, isSelected, imageUri } = foco; // Desestrutura os valores do estado
+        if (!descricao || !isSelected || !imageUri) {
+            Alert.alert('Por favor, preencha todos os campos e adicione ao menos uma imagem.');
+            return;
+        }
+  
+        // Cria um objeto para enviar
+        const focoData = {
+            descricao,
+            isSelected,
+            imageUri,
+        };
+
+        // Envia os dados para a API
+        const result = await postFoco(focoData);
+
+        if (result) {
+            Alert.alert('Foco enviado com sucesso!');
+            // Limpa o formulário após o envio
+            setFoco({ descricao: '', isSelected: false, imageUri: null });
+        } else {
+            Alert.alert('Erro ao enviar foco. Tente novamente.');
+        }
     };
 
     return (
-        <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#ecf0f1'}}>
+        <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#ecf0f1' }}>
             <View style={styles.wrapper}>
                 <Text style={styles.title}>Notificar Foco</Text>
                 <View style={styles.inputWrapper}>
@@ -100,8 +110,8 @@ export default function Notificar() {
                         multiline={true}
                         numberOfLines={4}
                         textAlignVertical="top"
-                        value={descricao}
-                        onChangeText={setDescricao}
+                        value={foco.descricao} // Atualiza para usar foco
+                        onChangeText={(text) => setFoco((prev) => ({ ...prev, descricao: text }))} // Atualiza o estado
                     />
                 </View>
 
@@ -111,9 +121,9 @@ export default function Notificar() {
                     uncheckedIcon="square-o"
                     checkedColor="green"
                     uncheckedColor="red"
-                    checked={isSelected}
-                    onPress={() => setIsSelected(!isSelected)}
-                    containerStyle={{ backgroundColor: 'tranparent', borderWidth: 0 }}
+                    checked={foco.isSelected} // Atualiza para usar foco
+                    onPress={() => setFoco((prev) => ({ ...prev, isSelected: !prev.isSelected }))} // Atualiza o estado
+                    containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
                 />
                 
                 <RederizarMapa />
@@ -123,36 +133,34 @@ export default function Notificar() {
                     <ButtonIcon
                         texto="Tirar foto"
                         icon={<Feather name="camera" size={24} color="white" />}
-                        onPress={() => verificarLimiteEExecutar(obterImagemCam)} 
+                        onPress={obterImagemCam} 
                         style={styles.buttonCameraBlue} 
                         textStyle={styles.buttonText} 
-                        />
+                    />
                     <ButtonIcon
                         texto="Fazer upload"
                         icon={<Feather name="upload" size={24} color="white" />}
-                        onPress={() => verificarLimiteEExecutar(obterImagemGaleria)} 
+                        onPress={obterImagemGaleria} 
                         style={styles.buttonCameraBlue}
                         textStyle={styles.buttonText} 
                     />
 
                     <View style={styles.imageWrapper}> 
-                        {
-                        imageUris.map((uri, index) => (
-                            <View key={index} style={styles.imageContainer}>
-                            <Image source={{ uri }} style={styles.image} />
-                            <Button 
-                                texto="Cancelar"
-                                onPress={() => removerImagem(uri)} 
-                                style={styles.buttonCameraRed}
-                                textStyle={styles.buttonText} 
-                            />
+                        {foco.imageUri && ( // Renderiza a imagem apenas se existir
+                            <View style={styles.imageContainer}>
+                                <Image source={{ uri: foco.imageUri }} style={styles.image} />
+                                <Button 
+                                    texto="Cancelar"
+                                    onPress={removerImagem} 
+                                    style={styles.buttonCameraRed}
+                                    textStyle={styles.buttonText} 
+                                />
                             </View>
-                        ))
-                      }
+                        )}
                     </View>
                 </View>
                             
-                <View style={styles.buttonWrapper} >
+                <View style={styles.buttonWrapper}>
                     <Button
                         texto="Enviar" 
                         onPress={handle} 
@@ -161,7 +169,7 @@ export default function Notificar() {
                     />
                     <Button
                         texto="Cancelar" 
-                        onPress={handle} 
+                        onPress={() => setFoco({ descricao: '', isSelected: false, imageUri: null })} // Cancela e limpa o formulário
                         style={styles.buttonCancelar} 
                         textStyle={styles.customText} 
                     />
@@ -178,11 +186,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginBottom: 20,
     },
-    title:{
+    title: {
         fontSize: 24,
         fontWeight: '600',
         textAlign: 'center',
-        marginBottom: 20
+        marginBottom: 20,
     },
     inputWrapper: {
         marginBottom: 20,
@@ -210,7 +218,7 @@ const styles = StyleSheet.create({
         padding: 8,
         width: '100%',
     },
-    imageWrapper:{
+    imageWrapper: {
         justifyContent: 'space-between',
         alignItems: 'center',
         width: '100%',

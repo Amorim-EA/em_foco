@@ -1,42 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { getUsersSolicitado } from '../../../services/apiUser';
+import CardUserSolicitado from '../../../components/CardUserSolicitacoes';
 
-export default function Solicitacoes() {
-  const [users, setUsers] = useState([]);
-  async function loadUsers(){
-    try {
-        const response = await getUsersSolicitado();
-        setUsers(response);
-    } catch {
-        console.error("Erro ao obter os usuários:");
-    }
-};
-
-  useEffect(() => {
-    loadUsers();
-}, []);
-
+export default function Solicitacoes({ users }) {
   return (
-      <View style={styles.contaniner}>
-          {users ? (
-            users?.map((user, index) => (
-              <CardUserSolicitado name={user.name} email={user.email} index={index}/>
-            ))
-          ) : (
-            <Text style={styles.text}>Não há solicitações no momento!</Text>
-          )}
-      </View>
+    <View style={styles.container}>
+      {users && users.length > 0 ? (
+        users.map((user, index) => (
+          <CardUserSolicitado name={user.name} email={user.email} key={index} />
+        ))
+      ) : (
+        <Text style={styles.text}>Não há solicitações no momento!</Text>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  contaniner: {
+  container: {
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   text: {
-    fontWeight: "600"
+    fontWeight: "600",
+    textAlign: 'center',
+    margin: 10,
   },
-})
+});

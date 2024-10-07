@@ -15,12 +15,12 @@ export default function RootNavigator() {
 
   return (
     <NavigationContainer>
-        {user ? (
+        {user  ? (
         user.type === 'admin' ? <AdministradorNavigator /> :
         user.type === 'agente' ? <AgenteNavigator /> :
         <CidadaoNavigator />
         ) : (
-        <AuthNavigator /> 
+        <AuthNavigator />
         )}
     </NavigationContainer>
   );

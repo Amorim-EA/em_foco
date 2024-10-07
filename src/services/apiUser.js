@@ -42,13 +42,13 @@ const getUsersSolicitado = async () => {
 
 const userToAgent = async (email) => {
   try{
+    const userEmail = { email: email }
     const responseOfAPI = await fetch(`${url}/user/request`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(objt),
+      body: JSON.stringify(userEmail),
     });
-    const userCreated = await responseOfAPI.json();
-    return userCreated;
+    await responseOfAPI.json();
   } catch {
     return null;
   }

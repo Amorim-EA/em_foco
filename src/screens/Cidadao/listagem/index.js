@@ -1,13 +1,16 @@
 import React from 'react';
 import { View } from 'react-native';
-import CardFocoCidadao from '../../../components/CardFocoCidadao';
+import ListaCidadao from '../../../components/ListaCidadao';
+import { getAllFoco } from '../../../services/apiFoco';
 
-export default function Listagem() {
-  const quantidade = [1, 2, 3, 4, 5]
+export default async function ListagemCidadao() {
+  const focosTodos = await getAllFoco;
+  // qual filtrar por usuario 
+
   return (
       <View>
-          {quantidade?.map((foco) => (
-            <CardFocoCidadao foto={foco.foco} descricao={foco.descricao} status={foco.status} />
+          {focos ?.map((foco) => (
+            <ListaCidadao foto={foco.foco} descricao={foco.descricao} status={foco.status} />
           ))}
       </View>
   );

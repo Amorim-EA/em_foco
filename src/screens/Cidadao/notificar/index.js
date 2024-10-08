@@ -22,7 +22,7 @@ export default function Notificar() {
     const [location, setLocation] = useState('');
     const [descricao, setDescricao] = useState()
     const [author, setAuthor] = useState(user);
-    const [imageUri, setImageUri] = useState()
+    const [imageFile, setImageFile] = useState()
     
     // Capturar Localização
     async function requestLocationPermissions() {
@@ -32,7 +32,7 @@ export default function Notificar() {
           setLocation(currentPosition);
           console.log("Minha localização: ", currentPosition)
         }
-      }
+    }
 
     const CapturarLocalizacao = async () => {
         if(isSelected) {
@@ -68,15 +68,12 @@ export default function Notificar() {
         } else {
             const filename = assets[0].uri.substring(assets[0].uri.lastIndexOf('/') + 1);
             const extend = filename.split('.')[1];
-            const formData = new FormData();
-            formData.append('file', {
+            setImageFile({
                 name: filename,
                 uri: assets[0].uri,
                 type: 'image/' + extend,
-            });
-            setImageUri(assets[0].uri);
-            console.log(formData)
-
+            })
+            console.log(imageFile.uri)
         }
     };
 
@@ -102,19 +99,18 @@ export default function Notificar() {
         } else {
             const filename = assets[0].uri.substring(assets[0].uri.lastIndexOf('/') + 1);
             const extend = filename.split('.')[1];
-            const formData = new FormData();
-            formData.append('file', {
+            setImageFile({
                 name: filename,
                 uri: assets[0].uri,
                 type: 'image/' + extend,
-            });
-            setImageUri(assets[0].uri);
-            console.log(formData)
+            })
+            console.log(imageFile.uri)
         }
-    };
+    }
+    
 
     const handleNotificar = async () => {
-        if (!descricao || !location || !location.coords.longitude || !location.coords.latitude || !imageUri) {
+        if (!descricao || !location || !location.coords.longitude || !location.coords.latitude || !imageFile) {
             Alert.alert('Por favor, preencha todos os campos e adicione a imagem.');
             return;
         }
@@ -123,7 +119,7 @@ export default function Notificar() {
             descricao,
             longitude: location.coords.longitude, 
             latitude: location.coords.latitude,
-            file: imageUri,
+            imageFile: imageFile,
             cidadao: author
         };
 
@@ -135,7 +131,7 @@ export default function Notificar() {
             Alert.alert('Foco enviado com sucesso!');
             setDescricao('');
             setIsSelected(false);
-            setImageUri(null);
+            setimageFile(null);
         } else {
             Alert.alert('Erro ao enviar foco. Tente novamente.');
         }
@@ -191,12 +187,12 @@ export default function Notificar() {
                     />
 
                     <View style={styles.imageWrapper}> 
-                        {imageUri && (
+                        {imageFile && (
                             <View style={styles.imageContainer}>
-                                <Image source={{ uri: imageUri }} style={styles.image} />
+                                <Image source={{ uri: imageFile.uri }} style={styles.image} />
                                 <Button 
                                     texto="Cancelar"
-                                    onPress={() => setImageUri(null)} 
+                                    onPress={() => setImageFile(null)} 
                                     style={styles.buttonCameraRed}
                                     textStyle={styles.buttonText} 
                                 />
@@ -208,7 +204,7 @@ export default function Notificar() {
                 <View style={styles.buttonWrapper}>
                     <Button
                         texto="Enviar" 
-                        onPress={handleNotificar} 
+                        onPress={() => handleNotificar} 
                         style={styles.buttonEnviar} 
                         textStyle={styles.customText} 
                     />
@@ -217,7 +213,8 @@ export default function Notificar() {
                         onPress={() => {
                             setDescricao('');
                             setIsSelected(false);
-                            setImageUri(null);
+                            setImageFile(null);
+                            setLocation(null)
                         }}
                         style={styles.buttonCancelar} 
                         textStyle={styles.customText} 

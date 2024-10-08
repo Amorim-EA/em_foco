@@ -1,11 +1,27 @@
 import { FontAwesome } from '@expo/vector-icons';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Button from '../../../components/Button';
 import { AuthContext } from '../../../contexts/AuthContext';
+import { getAllFoco } from '../../../services/apiFoco';
 
 export default function Home({ navigation }) {
   const { user } = useContext(AuthContext);
+  const [focos, setFocos] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getAllFoco();
+        setFocos(response);
+        console.log(response)
+      } catch (error) {
+        console.error("Erro ao buscar os focos:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#fff', flex: 1, paddingBottom: 25, paddingTop: 4 }}>
@@ -15,7 +31,7 @@ export default function Home({ navigation }) {
             onPress={() =>  navigation.navigate('Listagem')} 
           >
             <FontAwesome name="warning" size={30} color="orange" />
-            <Text style={[styles.textInfo, { color: 'red' }]}>{3} Novos focos encontrados!</Text>
+            <Text style={[styles.textInfo, { color: 'red' }]}>{focos.length} Novos focos encontrados!</Text>
           </Pressable>
 
           <View style={styles.buttonsWrapper}>

@@ -1,11 +1,15 @@
 import { Link } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 import Button from '../../../components/Button';
 
 export default function Inicio({ navigation }) {
   return (
-    <View style={styles.container}>
+    <ImageBackground
+    source={require('../../../assets/background-inicio.jpg')}
+    style={styles.background}
+    resizeMode='cover'
+    >
       <Text style={styles.title}>Em Foco!</Text>
       <View style={styles.wrapper}>
         <Button 
@@ -25,16 +29,18 @@ export default function Inicio({ navigation }) {
           <Text style={styles.textLink}>Sobre</Text>
         </Link>
       </View>
-    </View>
+  </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
-    backgroundColor: '#01c47f',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    height: '100%',
+    width: '100%',
+
   },
   title: {
     fontSize: 65,
@@ -42,8 +48,9 @@ const styles = StyleSheet.create({
     marginTop: '30%',
   },
   wrapper: {
-    width: '65%',
+    width: '75%',
     alignItems: 'center',
+    marginTop: '60%',
     marginBottom: 15,
   },
   customButton: {

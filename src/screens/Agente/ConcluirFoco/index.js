@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import RenderizarMapa from '../../../components/Mapa';
 import { updateFoco } from '../../../services/apiFoco';
 
 export default function ConcluirFoco() {
@@ -32,11 +33,7 @@ export default function ConcluirFoco() {
                     onChangeText={(value) => setFoco({ ...foco, descricao: value })}
                 />
 
-                {
-                  /*
-                  mapa parametros   foco.longitude && foco.latitude
-                  */
-                }
+                <RenderizarMapa latitude={foco.latitude} longitude={foco.longitude} />
 
                 <Image source={foco.imagem} style={styles.image} />
 

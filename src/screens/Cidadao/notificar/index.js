@@ -137,6 +137,7 @@ export default function Notificar() {
                         multiline={true}
                         numberOfLines={4}
                         textAlignVertical="top"
+                        value={descricao}
                         onChangeText={value => setDescricao(value)} 
                     />
                 </View>

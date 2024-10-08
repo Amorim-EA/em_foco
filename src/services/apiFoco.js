@@ -1,4 +1,4 @@
-const url = "http://localhost:3003/api";
+const url = "https://emfocoapi.onrender.com/api";
 
 const postFoco = async (foco) => {
   try{

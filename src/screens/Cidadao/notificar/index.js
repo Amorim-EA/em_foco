@@ -13,6 +13,8 @@ import RederizarMapa from '../../../components/Mapa';
 import { AuthContext } from '../../../contexts/AuthContext';
 import { postFoco } from '../../../services/apiFoco';
 
+
+
 export default function Notificar() {
     const { user } = useContext(AuthContext);
 
@@ -44,59 +46,73 @@ export default function Notificar() {
 
     // fim
 
-    const requestCameraPermission = async () => {
-        const { status } = await ImagePicker.requestCameraPermissionsAsync();
-        if (status !== 'granted') {
-            Alert.alert('Você precisa conceder permissão para usar a câmera!');
+    const handlePickerCamera = async () => {
+        const { granted } = await ImagePicker.requestCameraPermissionsAsync();
+        if (!granted) {
+            Alert.alert(
+                'Permissão necessária',
+                'Permita que sua aplicação acesse a câmera.'
+            );
+            return;
         }
-        return status === 'granted';
-    };
 
-    const requestGalleryPermission = async () => {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-            Alert.alert('Você precisa conceder permissão para acessar a galeria!');
-        }
-        return status === 'granted';
-    };
+        const { assets, canceled } = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            aspect: [4, 4],
+            quality: 1,
+        });
 
-    const adicionarImagem = (uri) => {
-        setImageUri(uri);
-    };
+        if (canceled) {
+            Alert.alert('Operação cancelada', 'Você cancelou a captura de imagem.');
+        } else {
+            const filename = assets[0].uri.substring(assets[0].uri.lastIndexOf('/') + 1);
+            const extend = filename.split('.')[1];
+            const formData = new FormData();
+            formData.append('file', {
+                name: filename,
+                uri: assets[0].uri,
+                type: 'image/' + extend,
+            });
+            setImageUri(assets[0].uri);
+            console.log(formData)
 
-    const obterImagemCam = async () => {
-        const hasPermission = await requestCameraPermission();
-        if (hasPermission) {
-            const result = await ImagePicker.launchCameraAsync();
-            if (!result.canceled) {
-                const uri = result.assets[0]?.uri;
-                if (uri) {
-                    adicionarImagem(uri);
-                } else {
-                    Alert.alert('Erro ao obter a URI da imagem da câmera.');
-                }
-            }
-        }
-    };
-
-    const obterImagemGaleria = async () => {
-        const hasPermission = await requestGalleryPermission();
-        if (hasPermission) {
-            const result = await ImagePicker.launchImageLibraryAsync();
-            if (!result.canceled) {
-                const uri = result.assets[0]?.uri;
-                if (uri) {
-                    adicionarImagem(uri);
-                } else {
-                    Alert.alert('Erro ao obter a URI da imagem da galeria.');
-                }
-            }
         }
     };
 
-    const removerImagem = () => {
-        setImageUri(null);
+    const handlePickerGaleria = async () => {
+        const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!granted) {
+            Alert.alert(
+                'Permissão necessária',
+                'Permita que sua aplicação acesse as imagens da galeria.'
+            );
+            return;
+        }
+
+        const { assets, canceled } = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            aspect: [4, 4],
+            quality: 1,
+        });
+
+        if (canceled) {
+            Alert.alert('Operação cancelada', 'Você cancelou a seleção de imagem.');
+        } else {
+            const filename = assets[0].uri.substring(assets[0].uri.lastIndexOf('/') + 1);
+            const extend = filename.split('.')[1];
+            const formData = new FormData();
+            formData.append('file', {
+                name: filename,
+                uri: assets[0].uri,
+                type: 'image/' + extend,
+            });
+            setImageUri(assets[0].uri);
+            console.log(formData)
+        }
     };
+
     const handleNotificar = async () => {
         if (!descricao || !location || !location.coords.longitude || !location.coords.latitude || !imageUri) {
             Alert.alert('Por favor, preencha todos os campos e adicione a imagem.');
@@ -107,7 +123,7 @@ export default function Notificar() {
             descricao,
             longitude: location.coords.longitude, 
             latitude: location.coords.latitude,
-            image: imageUri,
+            file: imageUri,
             cidadao: author
         };
 
@@ -162,14 +178,14 @@ export default function Notificar() {
                     <ButtonIcon
                         texto="Tirar foto"
                         icon={<Feather name="camera" size={24} color="white" />}
-                        onPress={obterImagemCam} 
+                        onPress={handlePickerCamera} 
                         style={styles.buttonCameraBlue} 
                         textStyle={styles.buttonText} 
                     />
                     <ButtonIcon
                         texto="Fazer upload"
                         icon={<Feather name="upload" size={24} color="white" />}
-                        onPress={obterImagemGaleria} 
+                        onPress={handlePickerGaleria} 
                         style={styles.buttonCameraBlue}
                         textStyle={styles.buttonText} 
                     />
@@ -180,7 +196,7 @@ export default function Notificar() {
                                 <Image source={{ uri: imageUri }} style={styles.image} />
                                 <Button 
                                     texto="Cancelar"
-                                    onPress={removerImagem} 
+                                    onPress={() => setImageUri(null)} 
                                     style={styles.buttonCameraRed}
                                     textStyle={styles.buttonText} 
                                 />
@@ -252,19 +268,16 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     imageWrapper: {
-        justifyContent: 'space-between',
+        marginTop: 20,
         alignItems: 'center',
-        width: '100%',
-        flexDirection: 'row',
     },
     imageContainer: {
-        width: '45%',
         alignItems: 'center',
-        marginBottom: 10,
     },
     image: {
-        width: '100%',
-        height: 150,
+        width: 200,
+        height: 200,
+        borderRadius: 10,
     },
     placeholder: {
         textAlign: 'center',

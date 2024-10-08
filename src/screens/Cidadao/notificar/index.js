@@ -1,22 +1,48 @@
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useState } from 'react';
+import {
+    getCurrentPositionAsync,
+    requestForegroundPermissionsAsync
+} from 'expo-location';
+import React, { useContext, useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import Button from '../../../components/Button';
 import ButtonIcon from '../../../components/ButtonIcon';
 import RederizarMapa from '../../../components/Mapa';
-import { postFoco } from '../../../services/apiFoco'; // Importe sua função para enviar os dados
+import { AuthContext } from '../../../contexts/AuthContext';
+import { postFoco } from '../../../services/apiFoco';
 
 export default function Notificar() {
-    const [foco, setFoco] = useState({
-        descricao: '',
-        longitude: '',
-        latitude: '',
-        cidadao: '',
-        imageUri: null,
-        isSelected: false,
-    });
+    const { user } = useContext(AuthContext);
+
+    const [isSelected, setIsSelected] = useState(false);
+    const [location, setLocation] = useState('');
+    const [descricao, setDescricao] = useState()
+    const [author, setAuthor] = useState(user);
+    const [imageUri, setImageUri] = useState()
+    
+    // Capturar Localização
+    async function requestLocationPermissions() {
+        const { granted } = await requestForegroundPermissionsAsync(); 
+        if (granted) {
+          const currentPosition = await getCurrentPositionAsync();
+          setLocation(currentPosition);
+          console.log("Minha localização: ", currentPosition)
+        }
+      }
+
+    const CapturarLocalizacao = async () => {
+        if(isSelected) {
+            await requestLocationPermissions();
+        }
+    }
+
+    useEffect(() => {
+        CapturarLocalizacao()
+    }, [isSelected])
+
+    // fim
 
     const requestCameraPermission = async () => {
         const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -35,7 +61,7 @@ export default function Notificar() {
     };
 
     const adicionarImagem = (uri) => {
-        setFoco((prev) => ({ ...prev, imageUri: uri }));
+        setImageUri(uri);
     };
 
     const obterImagemCam = async () => {
@@ -69,30 +95,31 @@ export default function Notificar() {
     };
 
     const removerImagem = () => {
-        setFoco((prev) => ({ ...prev, imageUri: null })); // Remove a imagem
+        setImageUri(null);
     };
-
-    const handle = async () => {
-        const { descricao, isSelected, imageUri } = foco; // Desestrutura os valores do estado
-        if (!descricao || !isSelected || !imageUri) {
-            Alert.alert('Por favor, preencha todos os campos e adicione ao menos uma imagem.');
+    const handleNotificar = async () => {
+        if (!descricao || !location || !location.coords.longitude || !location.coords.latitude || !imageUri) {
+            Alert.alert('Por favor, preencha todos os campos e adicione a imagem.');
             return;
         }
-  
-        // Cria um objeto para enviar
-        const focoData = {
+    
+        const foco = {
             descricao,
-            isSelected,
-            imageUri,
+            longitude: location.coords.longitude, 
+            latitude: location.coords.latitude,
+            image: imageUri,
+            cidadao: author
         };
 
-        // Envia os dados para a API
-        const result = await postFoco(focoData);
-
+       console.log(result)
+    
+        const result = await postFoco(foco);
+    
         if (result) {
             Alert.alert('Foco enviado com sucesso!');
-            // Limpa o formulário após o envio
-            setFoco({ descricao: '', isSelected: false, imageUri: null });
+            setDescricao('');
+            setIsSelected(false);
+            setImageUri(null);
         } else {
             Alert.alert('Erro ao enviar foco. Tente novamente.');
         }
@@ -110,8 +137,7 @@ export default function Notificar() {
                         multiline={true}
                         numberOfLines={4}
                         textAlignVertical="top"
-                        value={foco.descricao} // Atualiza para usar foco
-                        onChangeText={(text) => setFoco((prev) => ({ ...prev, descricao: text }))} // Atualiza o estado
+                        onChangeText={value => setDescricao(value)} 
                     />
                 </View>
 
@@ -121,14 +147,16 @@ export default function Notificar() {
                     uncheckedIcon="square-o"
                     checkedColor="green"
                     uncheckedColor="red"
-                    checked={foco.isSelected} // Atualiza para usar foco
-                    onPress={() => setFoco((prev) => ({ ...prev, isSelected: !prev.isSelected }))} // Atualiza o estado
+                    checked={isSelected}
+                    onPress={() => setIsSelected(!isSelected)} 
                     containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
                 />
-                
-                <RederizarMapa />
 
-                {/* Camera */} 
+                
+                {location && location.coords && (
+                    <RederizarMapa longitude={location.coords.longitude} latitude={location.coords.latitude}/>
+                )}
+                
                 <View style={styles.containerCamera}>
                     <ButtonIcon
                         texto="Tirar foto"
@@ -146,9 +174,9 @@ export default function Notificar() {
                     />
 
                     <View style={styles.imageWrapper}> 
-                        {foco.imageUri && ( // Renderiza a imagem apenas se existir
+                        {imageUri && (
                             <View style={styles.imageContainer}>
-                                <Image source={{ uri: foco.imageUri }} style={styles.image} />
+                                <Image source={{ uri: imageUri }} style={styles.image} />
                                 <Button 
                                     texto="Cancelar"
                                     onPress={removerImagem} 
@@ -163,13 +191,17 @@ export default function Notificar() {
                 <View style={styles.buttonWrapper}>
                     <Button
                         texto="Enviar" 
-                        onPress={handle} 
+                        onPress={handleNotificar} 
                         style={styles.buttonEnviar} 
                         textStyle={styles.customText} 
                     />
-                    <Button
+                   <Button
                         texto="Cancelar" 
-                        onPress={() => setFoco({ descricao: '', isSelected: false, imageUri: null })} // Cancela e limpa o formulário
+                        onPress={() => {
+                            setDescricao('');
+                            setIsSelected(false);
+                            setImageUri(null);
+                        }}
                         style={styles.buttonCancelar} 
                         textStyle={styles.customText} 
                     />

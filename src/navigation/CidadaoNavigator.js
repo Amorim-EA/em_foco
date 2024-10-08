@@ -1,8 +1,8 @@
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Image } from 'react-native';
-import Listagem from '../screens/Cidadao/listagem';
 import Notificar from '../screens/Cidadao/notificar';
+import Listagem from '../screens/private/Listagem';
 import Contato from '../screens/public/contato';
 import Sobre from '../screens/public/sobre';
 import HomeNavigator from './HomeNavigator';

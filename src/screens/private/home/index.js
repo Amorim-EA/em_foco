@@ -1,13 +1,12 @@
 import { FontAwesome } from '@expo/vector-icons';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Button from '../../../components/Button';
-
+import { AuthContext } from '../../../contexts/AuthContext';
 
 export default function Home({ navigation }) {
-  const action = () => {
-    console.log('clicado');
-  }
+  const { user } = useContext(AuthContext);
+
   return (
     <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#fff', flex: 1, paddingBottom: 25, paddingTop: 4 }}>
 
@@ -21,15 +20,17 @@ export default function Home({ navigation }) {
 
           <View style={styles.buttonsWrapper}>
             <Text style={styles.title}>Viu um foco da Dengue?</Text>
-            <Button
-                texto="Notificar" 
-                onPress={() =>  navigation.navigate('Notificar')} 
-                style={styles.buttonNotificar} 
-                textStyle={styles.textButton} 
-            />
+           {user.type === 'cidadao' &&
+              <Button
+                  texto="Notificar" 
+                  onPress={() =>  navigation.navigate('Notificar')} 
+                  style={styles.buttonNotificar} 
+                  textStyle={styles.textButton} 
+              />
+           }
             <Button 
                 texto="Focos Notificados" 
-                onPress={action} 
+                onPress={() =>  navigation.navigate('Listagem')} 
                 style={styles.buttonListagem} 
                 textStyle={styles.textButton} 
             />
@@ -86,12 +87,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 600,
+    marginBottom: 15,
   },
   buttonNotificar: {
     backgroundColor: '#00c14d',
     paddingVertical: 8,
     paddingHorizontal: 20,
-    marginTop: 15,
     marginBottom: 20,
     borderRadius: 5,
     width: '80%',

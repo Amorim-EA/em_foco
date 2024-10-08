@@ -1,24 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import { getFoco, updateFoco } from '../../../services/apiFoco';
+import { updateFoco } from '../../../services/apiFoco';
 
-export default function ComcluirFoco() {
-    const [foco, setFoco] = useState({
-        descricao: '',
-        acao: '',
-        agente: '',
-    });
-  
-    useEffect(() => {
-        // LISTAGEM AGENT ! AO APERTAR EM UM CARD DE FOCO TRAZ PRA CA E PEGA O ID DO FOCO QUE PRESSIONOU
-        const findFoco = async () => {
-            const focoFind = await getFoco(focoId);
-
-        // CARREGA AS INFORMAÇÕES DO FOCO UNICO
-            setFoco({ ...foco, descricao: focoFind.descricao, email: focoFind.email });
-        };
-        findFoco();
-    }, []);
+export default function ConcluirFoco() {
+    const [foco, setFoco] = useState(null);
+    React.useEffect(() => {
+        if (route.params?.foco) {
+            setFoco(route.params?.foco)
+        }
+      }, [route.params?.foco]);
 
     const updateForm = async () => {
         try {
@@ -58,7 +48,7 @@ export default function ComcluirFoco() {
                 />
 
                 <Button title="Concluir !" onPress={updateForm} />
-                <Button title="Cancelar !" onPress={console.log('voltar')} />
+                <Button title="Cancelar !" onPress={() => navigation.navigate('Listagem')} />
 
             </View>
         </View>

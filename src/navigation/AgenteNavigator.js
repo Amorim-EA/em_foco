@@ -1,8 +1,10 @@
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import Home from '../screens/private/home/index';
+import { Image } from 'react-native';
 import Contato from '../screens/public/contato';
 import Sobre from '../screens/public/sobre';
+import HomeNavigator from './HomeNavigator';
+import ListagemNavigator from './ListagemNavigator';
 
 const Drawer = createDrawerNavigator();
 
@@ -36,10 +38,18 @@ export default function AgenteNavigator() {
 				>
 						<Drawer.Screen 
 							name="Home" 
-							component={Home}
+							component={HomeNavigator}
 							options={{ 
 								drawerIcon: ({color, size}) => <Feather name="home" color={"white"} size={size} />,
 								drawerLabel: "Inicio"
+							}}
+						/>
+						  <Drawer.Screen 
+							name="Listagem" 
+							component={ListagemNavigator}
+							options={{ 
+								drawerIcon: ({color, size}) => <Feather name="mail" color={"white"} size={size} />,
+								drawerLabel: "Listagem"
 							}}
 						/>
             <Drawer.Screen 

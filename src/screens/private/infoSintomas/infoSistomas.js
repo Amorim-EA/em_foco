@@ -3,7 +3,7 @@ import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Button from '../../../components/Button';
 
 
-export default function InfoSintomas({ navigate }) {
+export default function InfoSintomas({ navigation }) {
   const sintomas = [
     'Febre alta > 38.5°C.',
     'Dores musculares intensas.',
@@ -14,9 +14,6 @@ export default function InfoSintomas({ navigate }) {
     'Manchas vermelhas no corpo.',
   ];
 
-  const action = () => {
-    console.log('clicado');
-  }
   return (
     <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#fff', flex: 1, paddingTop: 4}}>
           <View style={styles.card}>

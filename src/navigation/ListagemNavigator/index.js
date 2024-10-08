@@ -1,10 +1,11 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import Listagem from '../../screens/private/listagem';
+import ConcluirFoco from '../../screens/Agente/ConcluirFoco';
+import Listagem from '../../screens/private/Listagem';
 
 const Stack = createNativeStackNavigator();
 
-export default function HomeNavigator() {
+export default function ListagemNavigator() {
     return (
         <Stack.Navigator initialRouteName="Listagem">
             <Stack.Screen
@@ -15,8 +16,8 @@ export default function HomeNavigator() {
                 }}
             />
             <Stack.Screen
-                name="Foco"
-                component={Foco}
+                name="Concluir"
+                component={ConcluirFoco}
                 options={{
                     headerShown: false,
                 }}

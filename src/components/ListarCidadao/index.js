@@ -29,15 +29,20 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     card: {
-        width: '90%',
+        width: '100%',
         marginBottom: 16,
         borderRadius: 8,
         padding: 16,
-        alignItems: 'center', 
-        justifyContent: 'center'
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 5,
     },
     cardzinho: {
         justifyContent: 'space-between',
+        width: '100%',
+        alignItems: 'center',
         flexDirection: 'row'
     },
   image: {

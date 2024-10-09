@@ -58,7 +58,7 @@ export default function CidadaoNavigator() {
 							component={Listagem} 
 							options={{ 
 								drawerIcon: ({color, size}) => <FontAwesome6 name="table-list" color={"white"} size={size} />,
-								drawerLabel: "Listagem"
+								drawerLabel: "Focos"
 							}}
 						/>
             <Drawer.Screen 

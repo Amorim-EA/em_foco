@@ -56,7 +56,7 @@ const RenderizarMapa = () => {
 
   return (
 <View style={styles.mapa}>
-    <Text style={styles.coords}>mapa</Text>
+    <Text style={styles.coords}>Mapa</Text>
 </View>
   )
 };
@@ -64,8 +64,8 @@ const RenderizarMapa = () => {
 const styles = StyleSheet.create({
   mapa: {
     backgroundColor: '#d9d9d9',
-    width: 250,
-    height: 250,
+    width: 200,
+    height: 200,
     marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',

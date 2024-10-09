@@ -32,7 +32,7 @@ export default function Listagem({navigation}) {
       {user.type === 'cidadao' ? (
         <ListaCidadao focos={focos} />
       ) : (
-        <ListaAgente focos={focos}  navigation={navigation} />
+        <ListaAgente focos={focos} navigation={navigation} />
       )}
     </View>
   );
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   status: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '90%'
+    width: '88%'
   },
   text: {
     fontWeight: 'bold',

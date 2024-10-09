@@ -41,9 +41,9 @@ const getOneFoco = async (id) => {
   }
 }
 
-const updateFoco = async (foco, id) =>{
+const updateFoco = async (id, foco,) =>{
   try{
-      const responseOfApi = await fetch(url + "/foco/" + id, {
+      const responseOfApi = await fetch(`${url}/foco/${id}`, {
           method: 'PUT',
           headers: {"Content-Type": "Application/json"},
           body: JSON.stringify(foco)

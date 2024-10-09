@@ -49,7 +49,7 @@ export default function AgenteNavigator() {
 							component={ListagemNavigator}
 							options={{ 
 								drawerIcon: ({color, size}) => <Feather name="mail" color={"white"} size={size} />,
-								drawerLabel: "Listagem"
+								drawerLabel: "Focos"
 							}}
 						/>
             <Drawer.Screen 

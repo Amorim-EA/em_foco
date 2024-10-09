@@ -1,5 +1,5 @@
 import { Feather, FontAwesome } from '@expo/vector-icons';
-import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function ListaAgente({ focos, navigation }) {
     return (
@@ -7,7 +7,7 @@ export default function ListaAgente({ focos, navigation }) {
             {focos?.map((foco, index) => (
                 <View key={index} style={styles.card}>
                         <View style={styles.cardzinho}>
-                        <Image source={{ uri: `http://localhost:3003/api/foco/image/${foco.image}`}} style={styles.image} />
+                        <Image source={{ uri: `http://localhost:3003/api/foco/image/${foco.image}`}} style={styles.imagem} />
                             <Text style={styles.description}>{foco.description}</Text>
                             {foco.status === 'aberto' ? ( 
                                 <FontAwesome name="warning" size={24} color="orange" />
@@ -17,10 +17,9 @@ export default function ListaAgente({ focos, navigation }) {
                         </View>
                         {foco.status === 'aberto' &&
                             <Pressable
-                                onPress={() => {
-                                Alert.alert(`Navegando para Concluir com id:${foco._id}`);
-                                navigation.navigate('Concluir', {id: foco._id});
-                                }}
+                                onPress={() => 
+                                 navigation.navigate('Concluir', {id: foco._id})
+                                }
                           >
                             <Text style={styles.textButton}>Concluir Foco</Text>
                           </Pressable>
@@ -38,11 +37,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     card: {
-        width: '90%',
+        width: '100%',
         marginBottom: 16,
         borderRadius: 8,
         padding: 16,
-        alignItems: 'center' 
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 5,
+        alignItems: 'center'
     },
     cardzinho: {
         justifyContent: 'space-between',
@@ -50,7 +54,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row'
     },
-    image: {
+    imagem: {
         width: 100,
         height: 100,
         marginBottom: 8,

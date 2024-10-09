@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import Button from '../../../components/Button';
 import InputText from '../../../components/InputText';
 import { AuthContext } from '../../../contexts/AuthContext';
@@ -11,18 +11,19 @@ export default function Autenticar({ navigation }) {
   const [errorPassword, setErrorPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = useContext(AuthContext);
+  const { login, user } = useContext(AuthContext);
 
   const handleLogin = async () => {
     if (validar()) {
       try {
-        const user = { 
+        const useForm = { 
           email: email, 
           password: password 
         };
+      
         setIsLoading(true);
-        await login(user);
-        
+        await login(useForm);
+       
       } catch (error) {
         console.log(error);
       } finally {

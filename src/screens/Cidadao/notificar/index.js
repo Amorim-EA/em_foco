@@ -41,7 +41,7 @@ export default function Notificar() {
     }
 
     useEffect(() => {
-        CapturarLocalizacao()
+         CapturarLocalizacao()
     }, [isSelected])
 
     // fim

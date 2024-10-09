@@ -21,7 +21,7 @@ export default function Notificar() {
     const [isSelected, setIsSelected] = useState(false);
     const [location, setLocation] = useState('');
     const [descricao, setDescricao] = useState()
-    const [author, setAuthor] = useState(user);
+    const [author, setAuthor] = useState('');
     const [imageFile, setImageFile] = useState()
     
     // Capturar Localização
@@ -30,7 +30,7 @@ export default function Notificar() {
         if (granted) {
           const currentPosition = await getCurrentPositionAsync();
           setLocation(currentPosition);
-          console.log("Minha localização: ", currentPosition)
+          Alert.alert(location);
         }
     }
 
@@ -114,7 +114,7 @@ export default function Notificar() {
             Alert.alert('Por favor, preencha todos os campos e adicione a imagem.');
             return;
         }
-    
+        setAuthor(user.name);
         const foco = {
             descricao,
             longitude: location.coords.longitude, 
@@ -123,13 +123,14 @@ export default function Notificar() {
             cidadao: author
         };
 
-       console.log(result)
+       console.log(foco)
     
         const result = await postFoco(foco);
     
         if (result) {
             Alert.alert('Foco enviado com sucesso!');
             setDescricao('');
+            setLocation(null);
             setIsSelected(false);
             setimageFile(null);
         } else {
@@ -209,7 +210,7 @@ export default function Notificar() {
                         textStyle={styles.customText} 
                     />
                    <Button
-                        texto="Cancelar" 
+                        texto="Cancelar imagem" 
                         onPress={() => {
                             setDescricao('');
                             setIsSelected(false);
@@ -265,6 +266,9 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     imageWrapper: {
+        backgroundColor: '#d9d9d9',
+        width: 250,
+        height: 250,
         marginTop: 20,
         alignItems: 'center',
     },
@@ -272,8 +276,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     image: {
-        width: 200,
-        height: 200,
+        width: '90%',
+        height: '90%',
         borderRadius: 10,
     },
     placeholder: {

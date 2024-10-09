@@ -2,9 +2,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Alert, Button, Image, StyleSheet, Text, TextInput, View } from 'react-native';
 import RenderizarMapa from '../../../components/Mapa';
 import { AuthContext } from '../../../contexts/AuthContext';
-import { getOneFoco, updateFoco } from '../../../services/apiFoco';
+import { getOneFoco } from '../../../services/apiFoco';
 
-export default function ConcluirFoco({ route, navigation }) {
+export default function ConcluirFoco({ params, navigation }) {
     const { user } = useContext(AuthContext);
 
     const [descricao, setDescricao] = useState('')
@@ -12,22 +12,21 @@ export default function ConcluirFoco({ route, navigation }) {
 
     const [foco, setFoco] = useState({});
     
-    const { id } = route.params;
-
     useEffect(() => {
         async function focoData()  {
-            await getOneFoco(id);
+            await getOneFoco(route.params.id);
         }
         setFoco({ ...focoData });
-    }, [id]);
+        setDescricao.foco.description
+    }, [route.params.id]);
 
     const updateForm = async () => {
         try {
-            const acoesFoco = {
+            const updateFoco = {
                 acao: acao,
-                author: use.name
+                author: user.name
             }
-            await updateFoco(acoesFoco, id);  
+            await updateFoco(id, updateFoco);  
             Alert.alert("Sucesso", "Foco alterado com sucesso!");
 
             navigation.navigate('Listagem');
@@ -63,8 +62,8 @@ export default function ConcluirFoco({ route, navigation }) {
                         multiline={true}
                         numberOfLines={4}
                         textAlignVertical="top"
-                        value={descricao}
-                        onChangeText={value => setDescricao(value)} 
+                        value={acao}
+                        onChangeText={value => setAcao(value)} 
                     />
                 </View>
 

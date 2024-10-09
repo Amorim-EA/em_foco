@@ -1,8 +1,9 @@
-const url = "https://emfocoapi.onrender.com/api";
+//const url = "https://emfocoapi.onrender.com/api";
+const url =  "http://localhost:3003/api"
 
 const getUserAuthenticated = async (user) => {
   try{
-    const responseOfAPI = await fetch(`${url}/user/auth`, {
+    const responseOfAPI = await fetch(`${url}/users/auth`, {
       method: 'POST',
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),
@@ -16,7 +17,7 @@ const getUserAuthenticated = async (user) => {
 
 const postUser = async (user) => {
   try{
-    const responseOfAPI = await fetch(`${url}/user`, {
+    const responseOfAPI = await fetch(`${url}/users`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),
@@ -30,7 +31,7 @@ const postUser = async (user) => {
 
 const getUsersSolicitado = async () => {
   try{
-    const responseOfAPI = await fetch(`${url}/user/request`, {
+    const responseOfAPI = await fetch(`${url}/users/request`, {
       cache: "no-cache"
     });
     const users = await responseOfAPI.json();
@@ -43,7 +44,7 @@ const getUsersSolicitado = async () => {
 const userToAgent = async (email) => {
   try{
     const userEmail = { email: email }
-    const responseOfAPI = await fetch(`${url}/user/request`, {
+    const responseOfAPI = await fetch(`${url}/users/request`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userEmail),

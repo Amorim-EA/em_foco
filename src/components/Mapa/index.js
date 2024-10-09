@@ -1,6 +1,5 @@
-import 'leaflet/dist/leaflet.css'; // Importar os estilos do leaflet
 import React from 'react';
-import { Platform, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 const RenderizarMapa = ({ latitude, longitude }) => {
   const localizacao = { latitude, longitude };
@@ -52,7 +51,23 @@ const RenderizarMapa = ({ latitude, longitude }) => {
     }
   };
 
-  return <View style={{ flex: 1 }}>{renderMap()}</View>;
+  return (
+<View style={styles.mapa}>
+    <Text style={styles.coords}>{location.longitude}</Text>
+    <Text style={styles.coords}>{location.latitude}</Text>
+</View>
+  )
 };
+
+const styles = StyleSheet.create({
+  mapa: {
+    backgroundColor: '#d9d9d9',
+    width: 250,
+    height: 250,
+    marginTop: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+},
+})
 
 export default RenderizarMapa;

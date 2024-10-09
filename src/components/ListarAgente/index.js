@@ -1,17 +1,13 @@
 import { Feather, FontAwesome } from '@expo/vector-icons';
-import React from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function ListaAgente({ focos, navigation }) {
     return (
         <View style={styles.container}>
-            {focos?.map((foco) => (
-                <View key={foco.id} style={styles.card}>
+            {focos?.map((foco, index) => (
+                <View key={index} style={styles.card}>
                         <View style={styles.cardzinho}>
-                            <Image 
-                                source={{ uri: `https://emfocoapi.onrender.com/api/foco/image/${foco.image}`}} 
-                                style={styles.image} 
-                            />
+                        <Image source={{ uri: `http://localhost:3003/api/foco/image/${foco.image}`}} style={styles.image} />
                             <Text style={styles.description}>{foco.description}</Text>
                             {foco.status === 'aberto' ? ( 
                                 <FontAwesome name="warning" size={24} color="orange" />
@@ -19,11 +15,17 @@ export default function ListaAgente({ focos, navigation }) {
                                 <Feather name="check" size={30} color="green" />
                             )}
                         </View>
-                        <Pressable
-                            onPress={() => navigation.navigate('Concluir', { id: foco.id })}
-                        >
+                        {foco.status === 'aberto' &&
+                            <Pressable
+                                onPress={() => {
+                                Alert.alert(`Navegando para Concluir com id:${foco._id}`);
+                                navigation.navigate('Concluir', {id: foco._id});
+                                }}
+                          >
                             <Text style={styles.textButton}>Concluir Foco</Text>
-                        </Pressable>
+                          </Pressable>
+                          
+                        }
                 </View>
             ))}
         </View>
@@ -43,8 +45,8 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     },
     cardzinho: {
-        width: '100%',
         justifyContent: 'space-between',
+        width: '100%',
         alignItems: 'center',
         flexDirection: 'row'
     },

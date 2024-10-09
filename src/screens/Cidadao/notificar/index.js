@@ -138,6 +138,9 @@ export default function Notificar() {
         }
     };
 
+
+    //longitude={location.coords.longitude} latitude={location.coords.latitude}
+
     return (
         <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#ecf0f1' }}>
             <View style={styles.wrapper}>
@@ -166,11 +169,8 @@ export default function Notificar() {
                     containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
                 />
 
-                
-                {location && location.coords && (
-                    <RederizarMapa longitude={location.coords.longitude} latitude={location.coords.latitude}/>
-                )}
-                
+                 <RederizarMapa /> 
+
                 <View style={styles.containerCamera}>
                     <ButtonIcon
                         texto="Tirar foto"
@@ -192,7 +192,7 @@ export default function Notificar() {
                             <View style={styles.imageContainer}>
                                 <Image source={{ uri: imageFile.uri }} style={styles.image} />
                                 <Button 
-                                    texto="Cancelar"
+                                    texto="Cancelar imagem"
                                     onPress={() => setImageFile(null)} 
                                     style={styles.buttonCameraRed}
                                     textStyle={styles.buttonText} 
@@ -210,7 +210,7 @@ export default function Notificar() {
                         textStyle={styles.customText} 
                     />
                    <Button
-                        texto="Cancelar imagem" 
+                        texto="Cancelar" 
                         onPress={() => {
                             setDescricao('');
                             setIsSelected(false);
@@ -230,6 +230,7 @@ const styles = StyleSheet.create({
     wrapper: {
         marginTop: 20,
         width: '90%',
+        alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 20,
     },
@@ -263,21 +264,22 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#ecf0f1',
         padding: 8,
-        width: '100%',
+        width: "100%",
     },
     imageWrapper: {
-        backgroundColor: '#d9d9d9',
-        width: 250,
-        height: 250,
         marginTop: 20,
         alignItems: 'center',
+        width: 250,
+        height: 250,
+        backgroundColor: '#d9d9d9',
     },
     imageContainer: {
         alignItems: 'center',
+        justifyContent: 'center',
     },
     image: {
-        width: '90%',
-        height: '90%',
+        width: 200,
+        height: 200,
         borderRadius: 10,
     },
     placeholder: {

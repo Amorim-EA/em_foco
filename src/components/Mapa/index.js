@@ -1,8 +1,10 @@
 import React from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-const RenderizarMapa = ({ latitude, longitude }) => {
-  const localizacao = { latitude, longitude };
+//  const localizacao = { latitude, longitude };
+//{latitude, longitude }
+
+const RenderizarMapa = () => {
 /** 
        return (
         <MapContainer
@@ -44,17 +46,17 @@ const RenderizarMapa = ({ latitude, longitude }) => {
           </React.Fragment>
         </MapView>
       );
-*/
-  const renderMap = () => {
+
+        const renderMap = () => {
     if (Platform.OS === 'web') {
 
     }
   };
+*/
 
   return (
 <View style={styles.mapa}>
-    <Text style={styles.coords}>{location.longitude}</Text>
-    <Text style={styles.coords}>{location.latitude}</Text>
+    <Text style={styles.coords}>mapa</Text>
 </View>
   )
 };
@@ -67,6 +69,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 15,
 },
 })
 

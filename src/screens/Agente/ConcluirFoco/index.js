@@ -1,17 +1,24 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import Button from '../../../components/Button';
 import RenderizarMapa from '../../../components/Mapa';
 import { AuthContext } from '../../../contexts/AuthContext';
 import { getOneFoco, updateFoco } from '../../../services/apiFoco';
-import Button from '../../../components/Button';
 
 export default function ConcluirFoco({ route, navigation }) {
     const { user } = useContext(AuthContext);
 
     const [descricao, setDescricao] = useState('');
+    const [location, setLocation] = useState(null);
     const [acao, setAcao] = useState('');
     const [uri, setUri] = useState('')
     const [foco, setFoco] = useState({});
+    const [region, setRegion] = useState({
+        latitude: -22.238,
+        longitude:  -53.3437,
+        latitudeDelta: 0.04,
+        longitudeDelta: 0.04,
+    });
     
     useEffect(() => {
         async function focoData() {
@@ -19,6 +26,15 @@ export default function ConcluirFoco({ route, navigation }) {
             setFoco(data); 
             setDescricao(data.description); 
             setUri(data.image)
+            setLocation({
+                latitude: data.latitude,
+                longitude: data.longitude,
+            });
+            setRegion({
+                ...region,
+                latitude: data.latitude,
+                longitude: data.longitude,
+            });
         }
         focoData();
     }, [route.params.id]);
@@ -54,8 +70,12 @@ export default function ConcluirFoco({ route, navigation }) {
                     />
                 </View>
 
-                <Image source={{ uri: `http://localhost:3003/api/foco/image/${uri}` }} style={styles.image} />
-                <RenderizarMapa latitude={foco.latitude} longitude={foco.longitude} />
+                <Image source={{ uri: `http://192.168.15.84:3003/api/foco/image/${uri}` }} style={styles.image} />
+
+                <RenderizarMapa  
+                    localizacao={location} 
+                    region={region} 
+                />
 
                 <View style={styles.inputWrapper}>
                     <Text style={styles.label}>Ações Executadas:</Text>

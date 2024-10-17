@@ -33,10 +33,10 @@ export default function Cadastro({ navigation }) {
 
       try {
         await postUser(newUser);
-        alert('Cadastro realizado com sucesso!');
+        Alert.alert('Cadastro realizado com sucesso!');
         navigation.navigate('Autenticar')
       } catch (error) {
-        alert('Ocorreu um erro ao cadastrar. Tente novamente.');
+        Alert.alert('Ocorreu um erro ao cadastrar. Tente novamente.');
         console.error(error);
       }
     }

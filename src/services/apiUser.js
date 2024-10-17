@@ -1,5 +1,5 @@
 //const url = "https://emfocoapi.onrender.com/api";
-const url =  "http://localhost:3003/api"
+const url =  "http://192.168.15.84:3003/api"
 
 const getUserAuthenticated = async (user) => {
   try{

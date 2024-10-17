@@ -9,17 +9,17 @@ export default function Listagem({navigation}) {
   const { user } = useContext(AuthContext);
   const [focos, setFocos] = useState([]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await getAllFoco();
-        setFocos(response);
-        console.log(response)
-      } catch (error) {
-        console.error("Erro ao buscar os focos:", error);
-      }
+  async function fetchData() {
+    try {
+      const response = await getAllFoco();
+      setFocos(response);
+      console.log(response)
+    } catch (error) {
+      console.error("Erro ao buscar os focos:", error);
     }
+  }
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -32,7 +32,7 @@ export default function Listagem({navigation}) {
       {user.type === 'cidadao' ? (
         <ListaCidadao focos={focos} />
       ) : (
-        <ListaAgente focos={focos} navigation={navigation} />
+        <ListaAgente focos={focos} fetchFocos={fetchData} navigation={navigation}/>
       )}
     </View>
   );

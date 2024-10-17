@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     textAlign: 'center', 
   },
   textLink: {
-    fontWeight: '600',
+    fontWeight: 'bold',
     fontSize: 28,
     marginTop: 8,
     textDecorationLine: 'none',

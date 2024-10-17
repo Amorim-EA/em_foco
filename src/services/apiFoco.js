@@ -1,5 +1,5 @@
 //const url = "https://emfocoapi.onrender.com/api";
-const url =  "http://localhost:3003/api"
+const url =  "http://192.168.15.84:3003/api"
 
 const postFoco = async (foco) => {
   try{
@@ -30,7 +30,7 @@ const getAllFoco = async () => {
 
 const getOneFoco = async (id) => {
   try {
-      const responseOfApi = await fetch(`${url}/foco/${id}`, {
+      const responseOfApi = await fetch(`${url}/focos/${id}`, {
           method: 'GET',
           headers: { 'Content-Type': 'Application/json' },
       });
@@ -43,7 +43,7 @@ const getOneFoco = async (id) => {
 
 const updateFoco = async (id, foco,) =>{
   try{
-      const responseOfApi = await fetch(`${url}/foco/${id}`, {
+      const responseOfApi = await fetch(`${url}/focos/${id}`, {
           method: 'PUT',
           headers: {"Content-Type": "Application/json"},
           body: JSON.stringify(foco)

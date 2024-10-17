@@ -14,7 +14,6 @@ export default function Home({ navigation }) {
       try {
         const response = await getAllFoco();
         setFocos(response);
-        console.log(response)
       } catch (error) {
         console.error("Erro ao buscar os focos:", error);
       }
@@ -89,7 +88,7 @@ const styles = StyleSheet.create({
     width: '90%',
     alignItems: 'center',
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: 'bold',
     marginTop: 15,
   },
   textInfo: {
@@ -102,7 +101,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontWeight: 600,
+    fontWeight: '600',
     marginBottom: 15,
   },
   buttonNotificar: {

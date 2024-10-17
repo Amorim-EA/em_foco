@@ -12,7 +12,7 @@
     "icon": "./src/assets/image.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": ".src//assets/image.png",
+      "image": "./src/assets/image.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

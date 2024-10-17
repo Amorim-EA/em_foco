@@ -1,14 +1,21 @@
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import React, { useContext } from 'react';
 import { Image } from 'react-native';
+import { AuthContext } from '../contexts/AuthContext';
 import Contato from '../screens/public/contato';
 import Sobre from '../screens/public/sobre';
 import HomeNavigator from './HomeNavigator';
 import ListagemNavigator from './ListagemNavigator';
 
+const LogoutComponent = () => {
+  return <View />;
+};
+
 const Drawer = createDrawerNavigator();
 
 export default function AgenteNavigator() {
+		const { logout } = useContext(AuthContext);
     return(
 				<Drawer.Navigator 
 					initialRouteName='Home'
@@ -48,7 +55,7 @@ export default function AgenteNavigator() {
 							name="Listagem" 
 							component={ListagemNavigator}
 							options={{ 
-								drawerIcon: ({color, size}) => <Feather name="mail" color={"white"} size={size} />,
+								drawerIcon: ({color, size}) => <FontAwesome6 name="table-list" color={"white"} size={size} />,
 								drawerLabel: "Focos"
 							}}
 						/>
@@ -68,6 +75,17 @@ export default function AgenteNavigator() {
 								drawerLabel: "Sobre Nós"
 							}}
 						/>
+						<Drawer.Screen 
+                name="Logout" 
+                component={LogoutComponent}
+								options={{ 
+									drawerIcon: ({color, size}) => <Feather name="log-out" color={"white"} size={size} />,
+									drawerLabel: "Sair"
+								}}
+                listeners={{
+                    drawerItemPress: () => logout(),
+                }} 
+            />
 				</Drawer.Navigator>
     );
 }

@@ -1,58 +1,63 @@
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import {
-    getCurrentPositionAsync,
-    requestForegroundPermissionsAsync
-} from 'expo-location';
+import * as Location from 'expo-location';
 import React, { useContext, useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import Button from '../../../components/Button';
 import ButtonIcon from '../../../components/ButtonIcon';
-import RederizarMapa from '../../../components/Mapa';
+import RenderizarMapa from '../../../components/Mapa';
 import { AuthContext } from '../../../contexts/AuthContext';
 import { postFoco } from '../../../services/apiFoco';
-
-
 
 export default function Notificar() {
     const { user } = useContext(AuthContext);
 
     const [isSelected, setIsSelected] = useState(false);
-    const [location, setLocation] = useState('');
-    const [descricao, setDescricao] = useState()
+    const [location, setLocation] = useState(null);
+    const [descricao, setDescricao] = useState('');
     const [author, setAuthor] = useState('');
-    const [imageFile, setImageFile] = useState()
+    const [imageFile, setImageFile] = useState(null);
+    const [region, setRegion] = useState({
+        latitude: -22.238,
+        longitude:  -53.3437,
+        latitudeDelta: 0.04,
+        longitudeDelta: 0.04,
+    });
     
     // Capturar Localização
     async function requestLocationPermissions() {
-        const { granted } = await requestForegroundPermissionsAsync(); 
-        if (granted) {
-          const currentPosition = await getCurrentPositionAsync();
-          setLocation(currentPosition);
-          Alert.alert(location);
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Permissão negada', 'Permissão para acessar localização foi negada.');
+            return;
         }
+            let userLocation = await Location.getCurrentPositionAsync({});
+            setLocation({
+                latitude: userLocation.coords.latitude,
+                longitude: userLocation.coords.longitude,
+            });
+            setRegion({
+                ...region,
+                latitude: userLocation.coords.latitude,
+                longitude: userLocation.coords.longitude,
+            });
     }
 
     const CapturarLocalizacao = async () => {
-        if(isSelected) {
+        if (isSelected) {
             await requestLocationPermissions();
         }
-    }
+    };
 
     useEffect(() => {
-         CapturarLocalizacao()
-    }, [isSelected])
-
-    // fim
+        CapturarLocalizacao();
+    }, [isSelected]);
 
     const handlePickerCamera = async () => {
         const { granted } = await ImagePicker.requestCameraPermissionsAsync();
         if (!granted) {
-            Alert.alert(
-                'Permissão necessária',
-                'Permita que sua aplicação acesse a câmera.'
-            );
+            Alert.alert('Permissão necessária', 'Permita que sua aplicação acesse a câmera.');
             return;
         }
 
@@ -64,7 +69,7 @@ export default function Notificar() {
         });
 
         if (canceled) {
-            Alert.alert('Operação cancelada', 'Você cancelou a captura de imagem.');
+            alert('Operação cancelada', 'Você cancelou a captura de imagem.');
         } else {
             const filename = assets[0].uri.substring(assets[0].uri.lastIndexOf('/') + 1);
             const extend = filename.split('.')[1];
@@ -72,18 +77,14 @@ export default function Notificar() {
                 name: filename,
                 uri: assets[0].uri,
                 type: 'image/' + extend,
-            })
-            console.log(imageFile.uri)
+            });
         }
     };
 
     const handlePickerGaleria = async () => {
         const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!granted) {
-            Alert.alert(
-                'Permissão necessária',
-                'Permita que sua aplicação acesse as imagens da galeria.'
-            );
+            Alert.alert('Permissão necessária', 'Permita que sua aplicação acesse as imagens da galeria.');
             return;
         }
 
@@ -103,43 +104,36 @@ export default function Notificar() {
                 name: filename,
                 uri: assets[0].uri,
                 type: 'image/' + extend,
-            })
-            console.log(imageFile.uri)
+            });
         }
-    }
-    
+    };
 
     const handleNotificar = async () => {
-        if (!descricao || !location || !location.coords.longitude || !location.coords.latitude || !imageFile) {
+        if (!descricao || !location || !location.longitude || !location.latitude || !imageFile) {
             Alert.alert('Por favor, preencha todos os campos e adicione a imagem.');
             return;
         }
         setAuthor(user.name);
         const foco = {
             descricao,
-            longitude: location.coords.longitude, 
-            latitude: location.coords.latitude,
-            imageFile: imageFile,
-            cidadao: author
+            longitude: location.longitude, 
+            latitude: location.latitude,
+            imageFile: imageFile.uri,
+            cidadao: author,
         };
 
-       console.log(foco)
-    
         const result = await postFoco(foco);
     
         if (result) {
-            Alert.alert('Foco enviado com sucesso!');
+            alert('Foco enviado com sucesso!');
             setDescricao('');
             setLocation(null);
             setIsSelected(false);
-            setimageFile(null);
+            setImageFile(null);
         } else {
             Alert.alert('Erro ao enviar foco. Tente novamente.');
         }
     };
-
-
-    //longitude={location.coords.longitude} latitude={location.coords.latitude}
 
     return (
         <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#ecf0f1' }}>
@@ -161,6 +155,7 @@ export default function Notificar() {
                 <CheckBox
                     title="Capturar minha localização"
                     checkedIcon="check"
+                    size={28}
                     uncheckedIcon="square-o"
                     checkedColor="green"
                     uncheckedColor="red"
@@ -169,20 +164,20 @@ export default function Notificar() {
                     containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
                 />
 
-                 <RederizarMapa /> 
+                <RenderizarMapa localizacao={location} region={region} /> 
 
                 <View style={styles.containerCamera}>
                     <ButtonIcon
                         texto="Tirar foto"
                         icon={<Feather name="camera" size={24} color="white" />}
-                        onPress={handlePickerCamera} 
+                        onPress={() => handlePickerCamera} 
                         style={styles.buttonCameraBlue} 
                         textStyle={styles.buttonText} 
                     />
                     <ButtonIcon
                         texto="Fazer upload"
                         icon={<Feather name="upload" size={24} color="white" />}
-                        onPress={handlePickerGaleria} 
+                        onPress={() => handlePickerGaleria} 
                         style={styles.buttonCameraBlue}
                         textStyle={styles.buttonText} 
                     />
@@ -205,7 +200,7 @@ export default function Notificar() {
                 <View style={styles.buttonWrapper}>
                     <Button
                         texto="Enviar" 
-                        onPress={() => handleNotificar} 
+                        onPress={handleNotificar}
                         style={styles.buttonEnviar} 
                         textStyle={styles.customText} 
                     />
@@ -215,7 +210,7 @@ export default function Notificar() {
                             setDescricao('');
                             setIsSelected(false);
                             setImageFile(null);
-                            setLocation(null)
+                            setLocation(null);
                         }}
                         style={styles.buttonCancelar} 
                         textStyle={styles.customText} 
@@ -258,7 +253,6 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         textAlignVertical: 'top',
     },
-    // Cam 
     containerCamera: {
         justifyContent: 'center',
         alignItems: 'center',
@@ -282,12 +276,6 @@ const styles = StyleSheet.create({
         height: 200,
         borderRadius: 10,
     },
-    placeholder: {
-        textAlign: 'center',
-        marginBottom: 20,
-        marginTop: 20,
-    },
-    // com icone
     buttonCameraBlue: {
         width: '100%',
         padding: 12,
@@ -306,7 +294,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         textAlign: 'center',
-        fontSize: 16,
     },
     buttonWrapper: {
         flexDirection: 'row',
@@ -324,4 +311,5 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         backgroundColor: 'red'
     }
+
 });

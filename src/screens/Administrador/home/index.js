@@ -17,7 +17,7 @@ export default function Home() {
 
   useEffect(() => {
     loadUsers();
-  }, [users]);
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', flex: 1, paddingTop: 4 }}>

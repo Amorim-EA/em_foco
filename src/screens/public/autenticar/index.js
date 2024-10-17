@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import Button from '../../../components/Button';
 import InputText from '../../../components/InputText';
 import { AuthContext } from '../../../contexts/AuthContext';
@@ -70,7 +70,7 @@ export default function Autenticar({ navigation }) {
         />
       <Button
         texto={isLoading ? "Carregando..." : "Entrar"}
-        onPress={handleLogin}  // Remova a função anonima e passe a função diretamente
+        onPress={handleLogin}
         style={styles.buttonBlue} 
         textStyle={styles.buttonText} 
         disabled={isLoading}

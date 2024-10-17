@@ -1,15 +1,22 @@
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import React, { useContext } from 'react';
 import { Image } from 'react-native';
+import { AuthContext } from '../contexts/AuthContext';
 import Notificar from '../screens/Cidadao/notificar';
 import Listagem from '../screens/private/Listagem';
 import Contato from '../screens/public/contato';
 import Sobre from '../screens/public/sobre';
 import HomeNavigator from './HomeNavigator';
 
+const LogoutComponent = () => {
+  return <View />;
+};
+
 const Drawer = createDrawerNavigator();
 
 export default function CidadaoNavigator() {
+	  const { logout } = useContext(AuthContext);
     return(
 				<Drawer.Navigator
 					initialRouteName='Home'
@@ -77,6 +84,17 @@ export default function CidadaoNavigator() {
 								drawerLabel: "Sobre"
 							}}
 						/>
+						<Drawer.Screen 
+                name="Logout" 
+                component={LogoutComponent}
+								options={{ 
+									drawerIcon: ({color, size}) => <Feather name="log-out" color={"white"} size={size} />,
+									drawerLabel: "Sair"
+								}}
+                listeners={{
+                    drawerItemPress: () => logout(),
+                }} 
+            />
 				</Drawer.Navigator>
     );
 }

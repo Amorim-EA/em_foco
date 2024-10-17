@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    fontWeight: "600",
+    fontWeight: '600',
     textAlign: 'center',
     margin: 10,
   },

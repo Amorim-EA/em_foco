@@ -1,6 +1,6 @@
+import Button from '@/components/Button';
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import Button from '../../../components/Button';
 
 
 export default function InfoDengue({ navigation }) {
@@ -34,7 +34,8 @@ const styles = StyleSheet.create({
   },
   img: {
     width: '98%',
-    height: 130
+    height: 130,
+    borderRadius: 10,
   },
   title: {
     fontSize: 22,

@@ -1,6 +1,6 @@
+import CardUserSolicitado from '@/components/CardUserSolicitacoes';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import CardUserSolicitado from '../../../components/CardUserSolicitacoes';
 
 export default function Solicitacoes({ users }) {
   return (

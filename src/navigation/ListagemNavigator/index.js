@@ -1,7 +1,7 @@
+import ConcluirFoco from '@/screens/Agente/ConcluirFoco';
+import Listagem from '@/screens/private/Listagem';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import ConcluirFoco from '../../screens/Agente/ConcluirFoco';
-import Listagem from '../../screens/private/Listagem';
 
 const Stack = createNativeStackNavigator();
 

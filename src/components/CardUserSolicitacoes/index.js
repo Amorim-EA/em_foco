@@ -1,6 +1,6 @@
+import { userToAgent } from '@/services/apiUser';
 import { Feather } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { userToAgent } from '../../services/apiUser';
 
 const CardUserSolicitado = ({ name, email}) => {
   const aceitarSolicitacao = async () => {
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   card: {
     width: '90%',
     backgroundColor: '#fff',
-    padding: 15,
+    paddingVertical: 15,
     marginVertical: 10,
     borderRadius: 10,
     flexDirection: 'row',

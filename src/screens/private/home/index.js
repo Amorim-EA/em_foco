@@ -1,50 +1,53 @@
+import Button from '@/components/Button';
+import { AuthContext } from '@/contexts/AuthContext';
+import { getFocosEncontrados } from '@/services/apiFoco';
 import { FontAwesome } from '@expo/vector-icons';
-import React, { useContext, useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useContext, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import Button from '../../../components/Button';
-import { AuthContext } from '../../../contexts/AuthContext';
-import { getAllFoco } from '../../../services/apiFoco';
 
 export default function Home({ navigation }) {
   const { user } = useContext(AuthContext);
-  const [focos, setFocos] = useState([]);
+  const [focosEncontrados, setFocosEncontrados] = useState([]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await getAllFoco();
-        setFocos(response);
-      } catch (error) {
-        console.error("Erro ao buscar os focos:", error);
-      }
+  async function fetchData() {
+    try {
+      const response = await getFocosEncontrados(user.token);
+      setFocosEncontrados(response);
+    } catch (error) {
+      console.error("Erro ao buscar os focos:", error);
     }
+  }
 
-    fetchData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchData(user.token);
+    }, [])
+);
+
 
   return (
-    <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#fff', flex: 1, paddingBottom: 25, paddingTop: 4 }}>
+    <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#ecf0f1', paddingBottom: 25, paddingTop: 4 }}>
 
-          <Pressable
-            style={styles.iconTextWrapper}
-            onPress={() =>  navigation.navigate('Listagem')} 
-          >
+          <View style={styles.iconTextWrapper}>
             <FontAwesome name="warning" size={30} color="orange" />
-            <Text style={[styles.textInfo, { color: 'red' }]}>{focos.length} Novos focos encontrados!</Text>
-          </Pressable>
+            <Text style={[styles.textInfo, { color: 'red' }]}>{focosEncontrados} focos encontrados!</Text>
+          </View>
 
           <View style={styles.buttonsWrapper}>
-            <Text style={styles.title}>Viu um foco da Dengue?</Text>
            {user.type === 'cidadao' &&
-              <Button
-                  texto="Notificar" 
+              <>
+                <Text style={styles.title}>Viu um foco da Dengue?</Text>
+                <Button
+                  texto="Registrar foco da dengue" 
                   onPress={() =>  navigation.navigate('Notificar')} 
                   style={styles.buttonNotificar} 
                   textStyle={styles.textButton} 
-              />
+                />
+              </>
            }
             <Button 
-                texto="Focos Notificados" 
+                texto="Focos Registrados" 
                 onPress={() =>  navigation.navigate('Listagem')} 
                 style={styles.buttonListagem} 
                 textStyle={styles.textButton} 
@@ -86,6 +89,8 @@ export default function Home({ navigation }) {
 const styles = StyleSheet.create({
   iconTextWrapper: {
     width: '90%',
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
     fontSize: 14,
     fontWeight: 'bold',
@@ -93,11 +98,13 @@ const styles = StyleSheet.create({
   },
   textInfo: {
     fontSize: 17,
+    paddingLeft: 10,
   },
   buttonsWrapper: {
     marginTop: 15,
     alignItems: 'center',
     marginTop: 15,
+    width: '70%'
   },
   title: {
     fontSize: 22,
@@ -127,7 +134,8 @@ const styles = StyleSheet.create({
   },
   img: {
     width: '100%',
-    height: 130
+    height: 130,
+    borderRadius: 10,
   },
   titleCard: {
     fontSize: 16,

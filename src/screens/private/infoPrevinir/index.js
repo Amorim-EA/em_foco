@@ -1,6 +1,6 @@
+import Button from '@/components/Button';
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import Button from '../../../components/Button';
 
 
 export default function InfoPrevinir({ navigation }) {
@@ -8,7 +8,7 @@ export default function InfoPrevinir({ navigation }) {
     console.log('clicado');
   }
   return (
-    <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#fff', flex: 1, paddingTop: 4}}>
+    <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#fff', paddingTop: 4, paddingBottom: 15}}>
           <View style={styles.card}>
             <Text style={styles.title}>Prevenção da Dengue</Text>
             <Image style={styles.img} source={require('../../../assets/image-home3.png')} />
@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
   img: {
     width: '98%',
     height: 130,
+    borderRadius: 10,
     marginBottom: 10
   },
   title: {

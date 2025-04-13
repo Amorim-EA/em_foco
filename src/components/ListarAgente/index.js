@@ -3,20 +3,25 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { AuthContext } from '@/contexts/AuthContext';
+import { useContext } from 'react';
+
 export default function ListaAgente({ focos, fetchFocos, navigation }) {
+    const { user } = useContext(AuthContext);
+    
     useFocusEffect(
         useCallback(() => {
-            fetchFocos();
+            fetchFocos(user.token);
         }, [])
     );
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#ecf0f1', paddingBottom: 25, paddingTop: 4 }}>
             {focos?.map((foco, index) => (
                 <View key={index} style={styles.card}>
                     <View style={styles.cardzinho}>
                         <Image
-                            source={{ uri: `http://192.168.15.84:3003/api/foco/image/${foco.image}` }}
+                            source={{ uri: `https://api-emfoco.onrender.com/api/foco/image/${foco.image}` }}
                             style={styles.imagem}
                         />
                         <Text style={styles.description}>{foco.description}</Text>
@@ -40,16 +45,13 @@ export default function ListaAgente({ focos, fetchFocos, navigation }) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 16,
-        backgroundColor: '#fff',
-    },
     card: {
-        width: '100%',
+        width: '98%',
         marginBottom: 16,
         borderRadius: 8,
-        padding: 16,
-        backgroundColor: '#f5f5f5',
+        paddingVertical: 16,
+        paddingHorizontal: 16,
+        backgroundColor: '#fff',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,

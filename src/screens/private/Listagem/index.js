@@ -1,9 +1,9 @@
+import ListaAgente from '@/components/ListarAgente';
+import ListaCidadao from '@/components/ListarCidadao';
+import { AuthContext } from '@/contexts/AuthContext';
+import { getAllFoco } from '@/services/apiFoco';
 import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import ListaAgente from '../../../components/ListarAgente';
-import ListaCidadao from '../../../components/ListarCidadao';
-import { AuthContext } from '../../../contexts/AuthContext';
-import { getAllFoco } from '../../../services/apiFoco';
 
 export default function Listagem({navigation}) {
   const { user } = useContext(AuthContext);
@@ -11,7 +11,7 @@ export default function Listagem({navigation}) {
 
   async function fetchData() {
     try {
-      const response = await getAllFoco();
+      const response = await getAllFoco(user.token);
       setFocos(response);
       console.log(response)
     } catch (error) {
@@ -30,7 +30,7 @@ export default function Listagem({navigation}) {
         <Text style={styles.text}>Status</Text>
       </View>
       {user.type === 'cidadao' ? (
-        <ListaCidadao focos={focos} />
+        <ListaCidadao focos={focos} fetchFocos={fetchData} />
       ) : (
         <ListaAgente focos={focos} fetchFocos={fetchData} navigation={navigation}/>
       )}
@@ -41,14 +41,14 @@ export default function Listagem({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
+    paddingVertical: 16,
+    paddingHorizontal: 10,
     alignItems: 'center'
   },
   status: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '88%'
+    width: '90%'
   },
   text: {
     fontWeight: 'bold',

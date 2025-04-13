@@ -1,30 +1,49 @@
-import React from 'react';
+import { useRef } from 'react';
 import { StyleSheet } from 'react-native';
-import MapView, { Circle, Marker } from 'react-native-maps';
+import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+
 
 const RenderizarMapa = ({ localizacao, region }) => {
+    const mapRef = useRef(null);
+
+    const markerLocation = {
+      localizacao,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    };
+
+    const centralizarMapa = () => {
+      if (mapRef.current) {
+        mapRef.current.animateToRegion(markerLocation, 1000);
+      }
+    };
+
     return (
     <MapView
+        ref={mapRef}
         style={styles.mapa}
         region={region}
+        provider={PROVIDER_GOOGLE}
     >
+      
       {localizacao && (
-        <React.Fragment>
-        <Marker
-          coordinate={{
-            latitude: localizacao.latitude,
-            longitude: localizacao.longitude,
-          }}
-          title="Você está aqui"
-          description="Cadastrando foco neste local"
-        />
-        <Circle
-          center={localizacao}
-          radius={10}
-          strokeColor="rgba(255, 0, 0, 1)"
-          fillColor="rgba(255, 0, 0, 0.5)"
-        />
-      </React.Fragment>
+        <>
+          {centralizarMapa()}
+          <Marker
+            coordinate={{
+              latitude: localizacao.latitude,
+              longitude: localizacao.longitude,
+            }}
+            title="Foco da Dengue"
+            description="O foco da dengue está neste local"
+          />
+          <Circle
+            center={localizacao}
+            radius={10}
+            strokeColor="rgba(255, 0, 0, 1)"
+            fillColor="rgba(255, 0, 0, 0.5)"
+          />
+      </>
       )}
     </MapView>
     );
@@ -33,8 +52,8 @@ const RenderizarMapa = ({ localizacao, region }) => {
 const styles = StyleSheet.create({
   mapa: {
     backgroundColor: '#d9d9d9',
-    width: '90%',
-    height: 200,
+    width: '100%',
+    height: 280,
     marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',

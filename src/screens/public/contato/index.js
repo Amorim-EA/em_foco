@@ -1,15 +1,22 @@
-import React from 'react';
+import Button from '@/components/Button';
+import InputText from '@/components/InputText';
+import * as Linking from 'expo-linking';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Button from '../../../components/Button';
-import InputText from '../../../components/InputText';
 
 export default function Contato() {
+  const [assunto, setAssunto] = useState('');
+  const [msg, setMsg] = useState('');
+
   const handle = () => {
-    console.log('clicado')
-  }
+    const email = 'emfoco.dengue@gmail.com';
+    const url = `mailto:${email}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(msg)}`;
+    Linking.openURL(url);
+  };
+
   return (
       <View style={styles.container}>
-          <Text style={styles.title}>Contato ou Sugestão</Text>
+          <Text style={styles.title}>Envie nos um email</Text>
           <View style={styles.inputWrapper}>
               <InputText
                 placeholder="Nome"
@@ -19,11 +26,15 @@ export default function Contato() {
               />
               <InputText
                 placeholder="Assunto"
+                value={assunto}
+                onChangeText={value => setAssunto(value)}
               />
               <InputText
                 placeholder="Escreva uma breve mensagem"
                 multiline={true}
                 numberOfLines={4}
+                value={msg}
+                onChangeText={value => setMsg(value)}
               />
           </View>
           <View style={styles.buttonWrapper}>

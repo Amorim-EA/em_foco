@@ -1,6 +1,6 @@
+import Button from '@/components/Button';
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import Button from '../../../components/Button';
 
 
 export default function InfoSintomas({ navigation }) {
@@ -45,7 +45,8 @@ const styles = StyleSheet.create({
   img: {
     width: '98%',
     height: 130,
-    marginBottom: 10
+    marginBottom: 10,
+    borderRadius: 10,
   },
   title: {
     fontSize: 22,

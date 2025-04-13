@@ -1,9 +1,9 @@
+import Button from '@/components/Button';
+import RenderizarMapa from '@/components/Mapa';
+import { AuthContext } from '@/contexts/AuthContext';
+import { getOneFoco, updateFoco } from '@/services/apiFoco';
 import React, { useContext, useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import Button from '../../../components/Button';
-import RenderizarMapa from '../../../components/Mapa';
-import { AuthContext } from '../../../contexts/AuthContext';
-import { getOneFoco, updateFoco } from '../../../services/apiFoco';
 
 export default function ConcluirFoco({ route, navigation }) {
     const { user } = useContext(AuthContext);
@@ -22,7 +22,7 @@ export default function ConcluirFoco({ route, navigation }) {
     
     useEffect(() => {
         async function focoData() {
-            const data = await getOneFoco(route.params.id); 
+            const data = await getOneFoco(route.params.id, user.token); 
             setFoco(data); 
             setDescricao(data.description); 
             setUri(data.image)
@@ -43,10 +43,10 @@ export default function ConcluirFoco({ route, navigation }) {
         try {
             const updateData = {
                 acao: acao,
-                author: user.name,
+                agente: user.name,
             };
-            await updateFoco(route.params.id, updateData);
-            Alert.alert("Sucesso", "Foco alterado com sucesso!");
+            await updateFoco(route.params.id, updateData, user.token);
+            Alert.alert("Foco alterado com sucesso!");
             navigation.navigate('Listagem');
         } catch {
             Alert.alert("Erro", "Ocorreu um erro ao alterar o foco.");
@@ -54,31 +54,23 @@ export default function ConcluirFoco({ route, navigation }) {
     };
 
     return (
-        <ScrollView>
+        <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#ecf0f1', paddingBottom: 25, paddingTop: 4 }}>
         <View style={styles.container}>
-            <Text style={styles.title}>Remover Foco</Text>
+            <Text style={styles.title}>Resolver foco da dengue</Text>
             <View style={styles.form}>
                 <View style={styles.inputWrapper}>
-                    <Text style={styles.label}>Mensagem</Text>
-                    <TextInput
-                        style={styles.input}
-                        multiline={true}
-                        numberOfLines={4}
-                        textAlignVertical="top"
-                        value={descricao}
-                        onChangeText={value => setDescricao(value)}
-                    />
+                    <Text style={styles.label}>O que há no local</Text>
+                    <Text style={styles.textDescricao}>
+                        {descricao}   
+                    </Text>
                 </View>
 
-                <Image source={{ uri: `http://192.168.15.84:3003/api/foco/image/${uri}` }} style={styles.image} />
+                <RenderizarMapa localizacao={location} region={region} />
 
-                <RenderizarMapa  
-                    localizacao={location} 
-                    region={region} 
-                />
-
+                <Image source={{ uri: `https://api-emfoco.onrender.com/api/foco/image/${uri}` }} style={styles.image} />
+                
                 <View style={styles.inputWrapper}>
-                    <Text style={styles.label}>Ações Executadas:</Text>
+                    <Text style={styles.label}>O que foi feito?</Text>
                     <TextInput
                         style={styles.input}
                         multiline={true}
@@ -88,20 +80,21 @@ export default function ConcluirFoco({ route, navigation }) {
                         onChangeText={value => setAcao(value)} 
                     />
                 </View>
-
-                <Button 
-                    texto="Enviar"
-                    onPress={() => updateForm()} 
-                    style={styles.buttonEnviar}
-                    textStyle={styles.buttonText}
-                />
-                <Button 
-                    texto="Cancelar"
-                    onPress={() => 
-                        setImageFile(null)
-                    } 
-                    style={styles.buttonCancelar}
-                    textStyle={styles.buttonText} />
+                <View style={styles.buttonWrapper}>
+                    <Button 
+                        texto="Enviar"
+                        onPress={() => updateForm()} 
+                        style={styles.buttonEnviar}
+                        textStyle={styles.buttonText}
+                    />
+                    <Button 
+                        texto="Cancelar"
+                        onPress={() => 
+                            navigation.navigate('Listagem')
+                        } 
+                        style={styles.buttonCancelar}
+                        textStyle={styles.buttonText} />
+                </View>
             </View>
         </View>
         </ScrollView>
@@ -112,12 +105,16 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: '#fff',
+        backgroundColor: '#ecf0f1',
     },
     title: {
-        fontSize: 24,
+        fontSize: 33,
+        textAlign: 'center',
         fontWeight: 'bold',
         marginBottom: 16,
+    },
+    textDescricao: {
+
     },
     form: {
         marginVertical: 16,
@@ -129,39 +126,40 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     label: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 5,
     },
     input: {
-        height: 100,
+        height: 80,
         borderColor: '#ccc',
-        backgroundColor: '#d9d9d9',
+        backgroundColor: '#fff',
         borderWidth: 1,
         padding: 10,
         borderRadius: 5,
         textAlignVertical: 'top',
     },
     image: {
-        width: 200,
-        height: 200,
+        width: '100%',
+        height: 280,
         marginVertical: 16,
     },
-    buttonEnviar: {
+    buttonWrapper: {
+        flexDirection: 'row',
         width: '100%',
-        padding: 12,
-        backgroundColor: '#1351b4',
-        borderRadius: 5,
-        alignItems: 'center',
-        marginBottom: 10,
+        marginTop: 20,
+        justifyContent: 'space-between'
+    },
+    buttonEnviar: {
+        width: '45%',
+        borderRadius: 4,
+        backgroundColor: 'green'
     },
     buttonCancelar: {
-        width: '100%',
-        padding: 8,
-        backgroundColor: '#dc3545',
-        borderRadius: 5,
-        alignItems: 'center',
-    }, 
+        width: '45%',
+        borderRadius: 4,
+        backgroundColor: 'red'
+    },
     buttonText: {
         color: '#fff',
         textAlign: 'center',

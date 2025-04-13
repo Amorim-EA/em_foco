@@ -1,11 +1,12 @@
-//const url = "https://emfocoapi.onrender.com/api";
-const url =  "http://192.168.15.84:3003/api"
+const url = "http://192.168.15.103:3003/api";
 
 const getUserAuthenticated = async (user) => {
   try{
     const responseOfAPI = await fetch(`${url}/users/auth`, {
       method: 'POST',
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(user),
     });
     let userAuthenticated = await responseOfAPI.json();
@@ -19,20 +20,26 @@ const postUser = async (user) => {
   try{
     const responseOfAPI = await fetch(`${url}/users`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(user),
     });
     const userCreated = await responseOfAPI.json();
+    console.log(userCreated)
     return userCreated;
   } catch {
     return null;
   }
 }
 
-const getUsersSolicitado = async () => {
+const getUsersSolicitado = async (token) => {
   try{
     const responseOfAPI = await fetch(`${url}/users/request`, {
-      cache: "no-cache"
+      cache: "no-cache",
+      headers: { 
+        Authorization: `Bearer ${token}`
+      }
     });
     const users = await responseOfAPI.json();
     return users.users;
@@ -41,12 +48,15 @@ const getUsersSolicitado = async () => {
   }
 }
 
-const userToAgent = async (email) => {
+const userToAgent = async (email, token) => {
   try{
     const userEmail = { email: email }
     const responseOfAPI = await fetch(`${url}/users/request`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
       body: JSON.stringify(userEmail),
     });
     await responseOfAPI.json();

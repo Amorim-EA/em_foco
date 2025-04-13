@@ -47,8 +47,46 @@
     "newArchEnabled": true,
     "owner": "3r1ck_4m0r1m",
     "plugins": [
+      [
+        "react-native-maps",
+        {
+          "config": {
+            "googleMapsApiKey": "AIzaSyBvx6yEfGsbnW9wFa_HFfCT4Guk4mtpVgc"
+          }
+        }
+      ],
       "expo-localization",
       "expo-secure-store"
     ]
   }
 }
+
+
+🚧 Se você está testando no seu celular (com recursos nativos como mapas)
+
+Use o perfil:
+
+eas build -p android --profile development
+
+Esse perfil gera um Dev Client com suporte nativo a mapas, câmera, etc. Você instala esse app no celular e depois usa npx expo start pra se conectar ao projeto localmente (sem precisar de Expo Go).
+👀 Se quer compartilhar com colegas/testadores internos
+
+Use:
+
+eas build -p android --profile preview
+
+Também gera um app com suporte a nativos, mas sem precisar conectar ao projeto local. Ideal pra enviar via QR Code ou link (como se fosse quase um beta).
+📱 Se for enviar pra Play Store / App Store
+
+Use:
+
+eas build -p android --profile production
+
+Gera o APK/AAB com tudo pronto pra subir na loja. É o build final, sem Dev Client.
+🔁 Exemplo de fluxo ideal pra você:
+
+    🚀 Desenvolvimento com mapa → eas build -p android --profile development
+
+    🧪 Testes com equipe → eas build -p android --profile preview
+
+    📦 Publicação final → eas build -p android --profile production

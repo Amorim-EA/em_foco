@@ -1,9 +1,9 @@
+import Home from '@/screens/private/home';
+import InfoDengue from '@/screens/private/InfoDengue';
+import InfoPrevinir from '@/screens/private/infoPrevinir';
+import InfoSintomas from '@/screens/private/infoSintomas/infoSistomas';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import Home from '../../screens/private/home';
-import InfoDengue from '../../screens/private/InfoDengue';
-import InfoPrevinir from '../../screens/private/infoPrevinir';
-import InfoSintomas from '../../screens/private/infoSintomas/infoSistomas';
 
 const Stack = createNativeStackNavigator();
 

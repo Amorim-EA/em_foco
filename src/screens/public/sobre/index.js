@@ -54,14 +54,17 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   title: {
-    fontSize: 25,
+    fontSize: 28,
+    fontWeight: '500',
     textAlign: 'center',
     marginBottom: 5,
   },
   textParagraph: {
-    fontSize: 14,
+    fontSize: 17,
     textAlign: 'justify',
     marginBottom: 5,
+    marginTop: 5,
+    width: '100%'
   },
   teamWrapper: {
     width: '90%',
@@ -70,18 +73,19 @@ const styles = StyleSheet.create({
     flexWrap: 'no-wrap',
   },
   titleTeam: {
-    fontSize: 19,
+    fontSize: 23,
     textAlign: 'center',
     letterSpacing: 0.5,
   },
   cardWrapper: {
     width: '100%',
-    marginTop: 10,
+    marginTop: 30,
+    marginBottom: 100,
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
     backgroundColor: '#fff',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
   card: {
     display: 'flex',
@@ -92,17 +96,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   img: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 90,
+    height: 90,
+    borderRadius: 50,
     objectFit: 'cover',
     backgroundColor: '#333',
   },
   textName: {
-    fontSize: 14,
+    fontSize: 16,
   },
   textFuncao: {
-    fontSize: 12,
+    fontSize: 14,
     textAlign: 'center',
   },
 });

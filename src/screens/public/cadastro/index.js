@@ -1,6 +1,7 @@
 import Button from '@/components/Button';
 import InputText from '@/components/InputText';
-import { postUser } from '@/services/apiUser';
+import { createUserData } from '@/services/userServices';
+import validarCPF from '@/services/utils';
 import Checkbox from 'expo-checkbox';
 import React, { useState } from 'react';
 import {
@@ -25,16 +26,19 @@ export default function Cadastro({ navigation }) {
 
   const handleCadastrar = async () => {
     if (validar()) {
-      const newUser = {
-        name: name,
-        email: email,
-        password: password,
-        cpf: cpf,
-        solicited: isSelected,
-      };
-
       try {
-        const response = await postUser(newUser);
+        const cred = await register(email, password);
+        const uid = cred.user.uid;
+        const newUser = {
+          uid,
+          name: name,
+          email: email,
+          password: password,
+          cpf: cpf,
+          solicited: isSelected,
+          role: "cidadao"
+        };
+        const response = await createUserData(newUser)
         Alert.alert(response);
         if(response == 'Cadastro realizado com sucesso!'){
           navigation.navigate('Autenticar');
@@ -68,6 +72,10 @@ export default function Cadastro({ navigation }) {
     if (!cpfRegex.test(cpf)) {
       setErrorCpf('Preencha seu CPF corretamente');
       error = true;
+      if (!validarCPF(cpf)) {
+        setErrorCpf("CPF inválido")
+        error = true;
+      }
     }
     if (!password) {
       setErrorPassword('Preencha a senha');

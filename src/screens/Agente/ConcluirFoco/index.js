@@ -12,6 +12,7 @@ export default function ConcluirFoco({ route, navigation }) {
     const [location, setLocation] = useState(null);
     const [acao, setAcao] = useState('');
     const [uri, setUri] = useState('')
+    const [imageError, setImageError] = useState(false);
     const [foco, setFoco] = useState({});
     const [region, setRegion] = useState({
         latitude: -22.238,
@@ -22,23 +23,29 @@ export default function ConcluirFoco({ route, navigation }) {
     
     useEffect(() => {
         async function focoData() {
-            const data = await getOneFoco(route.params.id, user.token); 
-            setFoco(data); 
-            setDescricao(data.description); 
-            setUri(data.image)
-            setLocation({
+          try {
+            const data = await getOneFoco(route.params.id, user.token);
+            if (data) {
+              setFoco(data);
+              setDescricao(data.description);
+              setUri(data.image);
+              setLocation({ latitude: data.latitude, longitude: data.longitude });
+    
+              setRegion({
                 latitude: data.latitude,
                 longitude: data.longitude,
-            });
-            setRegion({
-                ...region,
-                latitude: data.latitude,
-                longitude: data.longitude,
-            });
+                latitudeDelta: 0.04,
+                longitudeDelta: 0.04,
+              });
+              setImageError(false);
+            }
+          } catch (error) {
+            Alert.alert('Erro', 'Não foi possível carregar os dados do foco.');
+          }
         }
+    
         focoData();
-    }, [route.params.id]);
-
+      }, [route.params.id, user.token]);
     const updateForm = async () => {
         try {
             const updateData = {
@@ -67,12 +74,17 @@ export default function ConcluirFoco({ route, navigation }) {
 
                 <RenderizarMapa localizacao={location} region={region} />
 
-                <Image source={{ uri: `https://api-emfoco.onrender.com/api/foco/image/${uri}` }} style={styles.image} />
+                {imageError ? (
+                    <Text style={{ textAlign: 'center', marginTop: 20 }}>Não foi possível carregar a imagem.</Text>
+                ) : (
+                    <Image source={{ uri: `https://api-emfoco.onrender.com/api/foco/image/${uri}` }} style={styles.image} onError={() => setImageError(true)} />
+                )}
                 
                 <View style={styles.inputWrapper}>
                     <Text style={styles.label}>O que foi feito?</Text>
                     <TextInput
                         style={styles.input}
+                        placeholderTextColor="#666" 
                         multiline={true}
                         numberOfLines={4}
                         textAlignVertical="top"

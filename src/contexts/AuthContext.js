@@ -1,80 +1,66 @@
-import { authService } from '@/services/authService';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useEffect, useState } from 'react';
-import { Alert } from 'react-native';
+import { login } from "@/services/authService";
+import { auth } from "@/services/firebaseConfig";
+import { getUserData } from "@/services/userService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { signOut } from "firebase/auth";
+import React, { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const saveUserToStorage = async (userData) => {
-    try {
-      const userJson = JSON.stringify(userData);
-      await AsyncStorage.setItem('user', userJson);
-    } catch (error) {
-      console.error('Erro ao salvar usuário no AsyncStorage:', error);
-    }
-  };
-
-  const loadUserFromStorage = async () => {
-    try {
-      const userJson = await AsyncStorage.getItem('user');
-      if (userJson !== null) {
-        setUser(JSON.parse(userJson));
-      }
-    } catch (error) {
-      console.error('Erro ao carregar usuário do AsyncStorage:', error);
-    }
-  };
-
+  //Carregar usuário salvo no storage
   useEffect(() => {
-    loadUserFromStorage();
+    const loadUser = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem("user");
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (e) {
+        console.error("Erro ao carregar usuário do storage:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadUser();
   }, []);
 
-  const login = async (userLogin) => {
-    console.log(userLogin);
-    try {
-      const userAuth = await authService(userLogin);
+  //Salvar Usuário
 
-      if (userAuth.message === "Usuário não encontrado!") {
-        Alert.alert("Usuário não encontrado!");
-        setUser(null); 
-        await AsyncStorage.removeItem('user');
-      }
-      else if (userAuth.message === "Senha incorreta!") {
-        Alert.alert("A senha está incorreta!");
-        setUser(null); 
-        await AsyncStorage.removeItem('user');
-      }
-      else if (userAuth.name) {
-        setUser(userAuth);
-        saveUserToStorage(userAuth);
-      }
-      else {
-        Alert.alert("Erro desconhecido durante o login");
-        setUser(null);
-        await AsyncStorage.removeItem('user');
-      }
-    } catch (error) {
-      console.error("Erro ao tentar fazer login: ", error);
-      Alert.alert("Erro ao tentar autenticar. Tente novamente mais tarde.");
-      setUser(null);
-      await AsyncStorage.removeItem('user');
-    }
+  //Login
+  const handleLogin = async (email, password) => {
+    const cred = await login(email, password);
+    const uid = cred.user.uid;
+
+    const userData = await getUserData(uid);
+    const fullUser = { ...cred.user, ...userData };
+
+    setUser(fullUser);
+    await AsyncStorage.setItem("user", JSON.stringify(fullUser));
+
+    return fullUser;
   };
 
-  const logout = async () => {
-    setUser(null); 
-    await AsyncStorage.removeItem('user');
-  };
-
-  const checkLogin = async () => {
-    loadUserFromStorage();
+  //Logout
+  const handleLogout = async () => {
+    await signOut(auth);
+    setUser(null);
+    await AsyncStorage.removeItem("user");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, checkLogin }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login: handleLogin,
+        register: handleRegister,
+        logout: handleLogout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -16,19 +16,17 @@ export default function Autenticar({ navigation }) {
   const handleLogin = async () => {
     if (validar()) {
       try {
-        const useForm = { 
-          email: email, 
-          password: password 
-        };
         setIsLoading(true);
-        await login(useForm);
+        await login(email, password);
         setIsLoading(false);
-      } catch (error) {
-        setIsLoading(false);
+      } catch (e) {
+        Alert.alert("Atenção", e.message, [
+          { text: "Reenviar verificação", onPress: () => sendEmailVerification(auth.currentUser) },
+          { text: "Ok" }
+        ]);
       }
-    }
+    };
   }
-
   const validar = () => {
     let error = false;
     setErrorEmail('');
@@ -58,6 +56,7 @@ export default function Autenticar({ navigation }) {
         <TextInput
           placeholder="E-mail"
           value={email}
+          placeholderTextColor="#666" 
           onChangeText={value => {
             setEmail(value);
             setErrorEmail('');
@@ -70,6 +69,7 @@ export default function Autenticar({ navigation }) {
         <TextInput
           placeholder="Senha"
           value={password}
+          placeholderTextColor="#666" 
           onChangeText={value => setPassword(value)}
           secureTextEntry={true}
           style={styles.input}

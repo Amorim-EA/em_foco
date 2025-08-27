@@ -2,21 +2,20 @@ import Button from '@/components/Button';
 import ButtonIcon from '@/components/ButtonIcon';
 import RenderizarMapa from '@/components/Mapa';
 import { AuthContext } from '@/contexts/AuthContext';
-import { postFoco } from '@/services/apiFoco';
+import { createFocoData } from '@/services/focoServices';
 import { Feather } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import React, { useContext, useEffect, useState } from 'react';
-import { Alert, Image, Linking, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
-export default function Notificar() {
+export default function Notificar({ navigation }) {
     const { user } = useContext(AuthContext);
-
+    const [loading, setLoading] = useState(false);
     const [isSelected, setIsSelected] = useState(false);
     const [location, setLocation] = useState(null);
     const [descricao, setDescricao] = useState('');
-    const [author, setAuthor] = useState('');
     const [imageFile, setImageFile] = useState(null);
     const [region, setRegion] = useState({
         latitude: -22.238,
@@ -44,19 +43,6 @@ export default function Notificar() {
           Alert.alert(
             'Permissão negada',
             'Você precisa permitir a localização para acessar este recurso.',
-            [
-              { text: 'Cancelar', style: 'cancel' },
-              {
-                text: 'Abrir Configurações',
-                onPress: () => {
-                  if (Platform.OS === 'ios') {
-                    Linking.openURL('app-settings:');
-                  } else {
-                    Linking.openSettings();
-                  }
-                },
-              },
-            ]
           );
         }
       };
@@ -75,60 +61,59 @@ export default function Notificar() {
     useEffect(() => {
         CapturarLocalizacao();
     }, [isSelected]);
-
-    const handlePickerCamera = async () => {
-        const { granted } = await ImagePicker.requestCameraPermissionsAsync();
-        if (!granted) {
-            Alert.alert('Permissão necessária', 'Permita que sua aplicação acesse a câmera.');
-            return;
-        }
-
-        const { assets, canceled } = await ImagePicker.launchCameraAsync({
-            allowsEditing: true,
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            aspect: [4, 4],
-            quality: 1,
+    
+    const pickImage = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
         });
-
-        if (canceled) {
-            Alert.alert('Operação cancelada', 'Você cancelou a captura de imagem.');
-        } else {
-            const filename = assets[0].uri.substring(assets[0].uri.lastIndexOf('/') + 1);
-            const extend = filename.split('.')[1];
-            setImageFile({
-                name: filename,
-                uri: assets[0].uri,
-                type: 'image/' + extend,
-            });
+      
+        if (result.canceled) {
+          Alert.alert('Operação cancelada', 'Você cancelou a seleção de imagem.');
+          return;
         }
-    };
-
-    const handlePickerGaleria = async () => {
-        const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (!granted) {
-            Alert.alert('Permissão necessária', 'Permita que sua aplicação acesse as imagens da galeria.');
-            return;
-        }
-
-        const { assets, canceled } = await ImagePicker.launchImageLibraryAsync({
-            allowsEditing: true,
-            mediaTypes: ImagePicker.MediaType,
-            aspect: [4, 4],
-            quality: 1,
+      
+        const asset = result.assets[0];
+        const filename = asset.uri.substring(asset.uri.lastIndexOf('/') + 1);
+        const extend = filename.split('.').pop();
+      
+        setImageFile({
+          name: filename,
+          uri: asset.uri,
+          type: 'image/' + extend,
         });
+      };
 
-        if (canceled) {
-            Alert.alert('Operação cancelada', 'Você cancelou a seleção de imagem.');
-        } else {
-            const filename = assets[0].uri.substring(assets[0].uri.lastIndexOf('/') + 1);
-            const extend = filename.split('.')[1];
-            setImageFile({
-                name: filename,
-                uri: assets[0].uri,
-                type: 'image/' + extend,
-            });
+      const handlePickerCamera = async () => {
+        const permission = await ImagePicker.requestCameraPermissionsAsync();
+        if (!permission.granted) {
+          Alert.alert('Permissão negada para usar a câmera');
+          return;
         }
-    };
+      
+        const result = await ImagePicker.launchCameraAsync({
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
+      
+        if (result.canceled) {
+          Alert.alert('Operação cancelada', 'Você cancelou a captura da imagem.');
+          return;
+        }
+      
+        const asset = result.assets[0];
+        const filename = asset.uri.substring(asset.uri.lastIndexOf('/') + 1);
+        const extend = filename.includes('.') ? filename.split('.').pop() : 'jpg';
+      
+        setImageFile({
+          name: filename,
+          uri: asset.uri,
+          type: 'image/' + extend,
+        });
+      };
 
     function limparForm(){
         setDescricao('');
@@ -138,34 +123,43 @@ export default function Notificar() {
     }
 
     const handleNotificar = async () => {
-        if (!descricao || !location || !location.longitude || !location.latitude || !imageFile) {
-            Alert.alert('Por favor, preencha todos os campos e adicione a imagem.');
+        if (!descricao) {
+          Alert.alert('Preencha a descrição');
+          return;
+        }
+        if (!location) {
+            Alert.alert('Precisamos da sua localização');
             return;
         }
-        setAuthor(user.name);
-
-        // Criar um FormData para enviar os dados e o arquivo de imagem
-        const formData = new FormData();
-        formData.append('description', descricao);
-        formData.append('longitude', location.longitude);
-        formData.append('latitude', location.latitude);
-        formData.append('cidadao', author);
-        formData.append('imageFile', {
-            uri: imageFile.uri,
-            name: imageFile.name,
-            type: imageFile.type
-        });
-        
-        const result = await postFoco(formData, user.token); // Fazendo o post com FormData
-        
-        if (result) {
-            Alert.alert('Foco enviado com sucesso!');
-            limparForm()
-            navigation.navigate('Listagem')
-        } else {
-            Alert.alert('Erro ao enviar foco. Tente novamente.');
+        if (!imageFile) {
+            Alert.alert('Precisamos da imagem');
+            return;
         }
-    };
+      
+        setLoading(true);
+      
+        const focoData = {
+            usuario: user.uid,
+            titulo,
+            descricao,
+            localizacao: { latitude, longitude },
+            imagem: imageFile.uri,
+        }
+
+        const id = await createFocoData(focoData);  
+        
+        setLoading(false);
+        
+        console.log("Foco cadastrado com sucesso! ID: " + id);
+
+        if (result) {
+          Alert.alert('Foco enviado com sucesso!');
+          limparForm();
+          navigation.navigate('Listagem');
+        } else {
+          Alert.alert('Erro ao enviar foco. Tente novamente.');
+        }
+      };
 
     return (
         <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#ecf0f1' }}>
@@ -177,6 +171,7 @@ export default function Notificar() {
                         style={styles.input}
                         multiline={true}
                         numberOfLines={2}
+                        placeholderTextColor="#666" 
                         textAlignVertical="top"
                         value={descricao}
                         onChangeText={value => setDescricao(value)} 
@@ -206,7 +201,7 @@ export default function Notificar() {
                     <ButtonIcon
                         texto="Fazer upload"
                         icon={<Feather name="upload" size={24} color="white" />}
-                        onPress={handlePickerGaleria} 
+                        onPress={pickImage} 
                         style={styles.buttonCameraBlue}
                         textStyle={styles.buttonText} 
                     />
@@ -227,12 +222,13 @@ export default function Notificar() {
                 </View>
                             
                 <View style={styles.buttonWrapper}>
-                    <Button
-                        texto="Enviar" 
-                        onPress={handleNotificar}
-                        style={styles.buttonEnviar} 
-                        textStyle={styles.customText} 
-                    />
+                <Button
+                    texto={loading ? 'Enviando...' : 'Enviar'}
+                    onPress={handleNotificar}
+                    disabled={loading}
+                    style={styles.buttonEnviar}
+                    textStyle={styles.customText}
+                />
                    <Button
                         texto="Cancelar" 
                         onPress={() => {

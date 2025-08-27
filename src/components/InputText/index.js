@@ -7,6 +7,7 @@ const InputText = ({ placeholder, onChangeText, errorMessage, secureTextEntry, k
       <TextInput
         style={[styles.input, styleInput]}
         placeholder={placeholder}
+        placeholderTextColor="#111" 
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}

@@ -1,16 +1,17 @@
 import Button from '@/components/Button';
-import InputText from '@/components/InputText';
 import * as Linking from 'expo-linking';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 
-export default function Contato() {
+export default function Contato({navigation}) {
+  const [nome, setNome] = useState('');
   const [assunto, setAssunto] = useState('');
   const [msg, setMsg] = useState('');
 
   const handle = () => {
     const email = 'emfoco.dengue@gmail.com';
-    const url = `mailto:${email}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(msg)}`;
+    const mensagem = `Olá, me chamo ${nome}\n\n${msg}\n\nAtenciosamente ${nome}`
+    const url = `mailto:${email}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(mensagem)}`;
     Linking.openURL(url);
   };
 
@@ -18,20 +19,22 @@ export default function Contato() {
       <View style={styles.container}>
           <Text style={styles.title}>Envie nos um email</Text>
           <View style={styles.inputWrapper}>
-              <InputText
+              <TextInput
                 placeholder="Nome"
+                placeholderTextColor="#666" 
+                value={nome}
+                onChangeText={value => setNome(value)}
               />
-              <InputText
-                placeholder="Email"
-              />
-              <InputText
+              <TextInput
                 placeholder="Assunto"
                 value={assunto}
+                placeholderTextColor="#666" 
                 onChangeText={value => setAssunto(value)}
               />
-              <InputText
+              <TextInput
                 placeholder="Escreva uma breve mensagem"
                 multiline={true}
+                placeholderTextColor="#666" 
                 numberOfLines={4}
                 value={msg}
                 onChangeText={value => setMsg(value)}
@@ -46,7 +49,7 @@ export default function Contato() {
             />
             <Button 
                   texto="Voltar" 
-                  onPress={handle} 
+                  onPress={() =>  navigation.navigate('Home')} 
                   style={styles.customButtonBlue} 
                   textStyle={styles.customText} 
             />

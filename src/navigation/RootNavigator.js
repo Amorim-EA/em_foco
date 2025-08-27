@@ -9,10 +9,18 @@ import AuthNavigator from './AuthNavigator';
 import CidadaoNavigator from './CidadaoNavigator';
 
 export default function RootNavigator() {
-  const { user } = useContext(AuthContext);
+  const { user, userRole, loading } = useContext(AuthContext);
   
   const [isConnected, setIsConnected] = useState(true); 
   const [isLoading, setIsLoading] = useState(true);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    );
+  }
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -27,7 +35,7 @@ export default function RootNavigator() {
 
   let Navigator;
   if (user) {
-    switch (user.type) {
+    switch (userRole) {
       case 'admin':
         Navigator = AdministradorNavigator;
         break;

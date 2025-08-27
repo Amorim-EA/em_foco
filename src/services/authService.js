@@ -1,14 +1,31 @@
-import { getUserAuthenticated } from './apiUser';
+import {
+  signInWithEmailAndPassword,
+  signOut
+} from "firebase/auth";
+import { Alert } from "react-native";
+import { auth } from "./firebaseConfig";
 
-const authService = async (user, navigation) => {
-  try {
-    const userAuth = await getUserAuthenticated(user);
-    console.log(userAuth)
-    return userAuth
+// Criar conta
+const registerUser = async () => {
+  try {   
+    return await createUserWithEmailAndPassword(auth, email, senha);
   } catch (error) {
-    console.log("Erro durante a autenticação", error);
-    return null;
+    Alert.alert(error)
   }
- } 
+}
 
-export { authService };
+// Login
+const loginUser = async (email, password) => {
+  try{
+    return await signInWithEmailAndPassword(auth, email, password);
+  } catch(error) {
+    Alert.alert(error)
+  }
+};
+
+// Logout
+const logoutUser = async () => {
+  return await signOut(auth);
+};
+
+export { loginUser, logoutUser, registerUser };

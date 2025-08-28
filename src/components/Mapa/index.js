@@ -27,10 +27,7 @@ const RenderizarMapa = ({ localizacao, region }) => {
       {localizacao && (
         <>
           <Marker
-            coordinate={{
-              latitude: localizacao.latitude,
-              longitude: localizacao.longitude,
-            }}
+            coordinate={localizacao}
             title="Foco da Dengue"
             description="O foco da dengue está neste local"
           />

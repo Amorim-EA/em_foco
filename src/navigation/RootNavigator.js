@@ -1,18 +1,13 @@
-import { AuthContext } from '@/contexts/AuthContext';
-import NetInfo from '@react-native-community/netinfo';
+import { useAuth } from '@/contexts/AuthContext';
 import { NavigationContainer } from '@react-navigation/native';
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import { ActivityIndicator, StatusBar, Text, View } from 'react-native';
-import AdministradorNavigator from './AdministradorNavigator';
 import AgenteNavigator from './AgenteNavigator';
 import AuthNavigator from './AuthNavigator';
 import CidadaoNavigator from './CidadaoNavigator';
 
 export default function RootNavigator() {
-  const { user, userRole, loading } = useContext(AuthContext);
-  
-  const [isConnected, setIsConnected] = useState(true); 
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -22,23 +17,9 @@ export default function RootNavigator() {
     );
   }
 
-  useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener(state => {
-      setIsConnected(state.isConnected);
-      setIsLoading(false);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
   let Navigator;
   if (user) {
-    switch (userRole) {
-      case 'admin':
-        Navigator = AdministradorNavigator;
-        break;
+    switch (user.role) {
       case 'agente':
         Navigator = AgenteNavigator;
         break;

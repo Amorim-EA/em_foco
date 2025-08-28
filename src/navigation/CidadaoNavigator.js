@@ -1,4 +1,4 @@
-import { AuthContext } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import Notificar from '@/screens/Cidadao/notificar';
 import Listagem from '@/screens/private/Listagem';
 import Contato from '@/screens/public/contato';
@@ -16,7 +16,7 @@ const LogoutComponent = () => {
 const Drawer = createDrawerNavigator();
 
 export default function CidadaoNavigator() {
-	  const { logout } = useContext(AuthContext);
+	const { signOut } = useAuth();
     return(
 				<Drawer.Navigator
 					initialRouteName='Home'
@@ -92,7 +92,7 @@ export default function CidadaoNavigator() {
 									drawerLabel: "Sair"
 								}}
                 listeners={{
-                    drawerItemPress: () => logout(),
+                    drawerItemPress: () => signOut(),
                 }} 
             />
 				</Drawer.Navigator>

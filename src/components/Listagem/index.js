@@ -1,27 +1,27 @@
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet,} from 'react-native';
+import { useAuth } from '@/contexts/AuthContext';
 
-import { AuthContext } from '@/contexts/AuthContext';
-import { useContext } from 'react';
-
-export default function ListaAgente({ focos, fetchFocos, navigation }) {
-    const { user } = useContext(AuthContext);
+export default function Listagem({ focos, fetchFocos, navigation }) {
+    const { user } = useAuth();
     
     useFocusEffect(
         useCallback(() => {
-            fetchFocos(user.token);
+            fetchFocos();
         }, [])
     );
 
     return (
-        <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#ecf0f1', paddingBottom: 25, paddingTop: 4 }}>
-            {focos?.map((foco, index) => (
+        <FlatList
+            data={focos}
+            keyExtractor={foco => foco.id}
+            renderItem={({ foco }) => (
                 <View key={index} style={styles.card}>
                     <View style={styles.cardzinho}>
                         <Image
-                            source={{ uri: `https://api-emfoco.onrender.com/api/foco/image/${foco.image}` }}
+                            source={{ uri: foco.image }}
                             style={styles.imagem}
                         />
                         <Text style={styles.description}>{foco.description}</Text>
@@ -31,7 +31,7 @@ export default function ListaAgente({ focos, fetchFocos, navigation }) {
                             <Feather name="check" size={30} color="green" />
                         )}
                     </View>
-                    {foco.status === 'aberto' && (
+                    {foco.status === 'aberto' && user.role === 'agente' && (
                         <Pressable
                             onPress={() => navigation.navigate('Concluir', { id: foco._id })}
                         >
@@ -39,8 +39,8 @@ export default function ListaAgente({ focos, fetchFocos, navigation }) {
                         </Pressable>
                     )}
                 </View>
-            ))}
-        </ScrollView>
+            )}
+        />
     );
 }
 
@@ -86,3 +86,4 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 });
+  

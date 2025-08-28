@@ -1,32 +1,47 @@
 import Button from '@/components/Button';
-import { AuthContext } from '@/contexts/AuthContext';
-import React, { useContext, useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import React, { useState } from 'react';
 import { ImageBackground, StyleSheet, Text, TextInput, View } from 'react-native';
 
 
-export default function Autenticar({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function Autenticar({ route }) {
+  const [email, setEmail] = useState(route?.params?.email || '');
+  const [password, setPassword] = useState(route?.params?.password || '');
   const [errorEmail, setErrorEmail] = useState('');
   const [errorPassword, setErrorPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = useContext(AuthContext)
+  const { signIn } = useAuth()
   
   const handleLogin = async () => {
     if (validar()) {
       try {
         setIsLoading(true);
-        await login(email, password);
-        setIsLoading(false);
+        const response = await signIn(email, password);
+        if (!response.success) {
+          if (response.message === "NoVerifiedEmail"){
+            Alert.alert(
+              "Atenção",
+              "Seu e-mail ainda não foi verificado. Deseja reenviar o link de verificação?",
+              [
+                { text: "Reenviar", onPress: () => reenviarEmailVerificacao(response.user) },
+                { text: "Ok" }
+              ]
+            );
+          } else {
+            Alert.alert(response.message);
+          }
+        } else {
+          Alert.alert(response.message);
+        }
       } catch (e) {
-        Alert.alert("Atenção", e.message, [
-          { text: "Reenviar verificação", onPress: () => sendEmailVerification(auth.currentUser) },
-          { text: "Ok" }
-        ]);
+       console.log('Nao foi possivel logar.', e);
+      } finally {
+        setIsLoading(false);
       }
     };
   }
+
   const validar = () => {
     let error = false;
     setErrorEmail('');

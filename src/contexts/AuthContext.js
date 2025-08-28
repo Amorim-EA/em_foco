@@ -1,67 +1,78 @@
-import { login } from "@/services/authService";
-import { auth } from "@/services/firebaseConfig";
-import { getUserData } from "@/services/userService";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { signOut } from "firebase/auth";
 import React, { createContext, useEffect, useState } from "react";
+import { loginUser, logoutUser, reenviarEmailVerificacao } from "@/services/useService";
+import { getUserData } from "@/services/userService";
+import { saveUser, getUser, removeUser } from "@/services/storageService";
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  //Carregar usuário salvo no storage
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const storedUser = await AsyncStorage.getItem("user");
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
-        }
-      } catch (e) {
-        console.error("Erro ao carregar usuário do storage:", e);
-      } finally {
-        setLoading(false);
-      }
-    };
+    async function loadUser() {
+      const userSalvo = await getUser();
+      if (userSalvo) setUser(userSalvo);
+      setLoading(false);
+    }
     loadUser();
   }, []);
 
-  //Salvar Usuário
+  async function signIn(email, senha) {
+  try {
+    const cred = await login(email, senha);
+    const firebaseUser = cred.user;
+    const uid = firebaseUser.uid;
 
-  //Login
-  const handleLogin = async (email, password) => {
-    const cred = await login(email, password);
-    const uid = cred.user.uid;
+     if (!firebaseUser.emailVerified) {
+      return { success: false, message: "NoVerifiedEmail", user: firebaseUser };
+    }
 
-    const userData = await getUserData(uid);
-    const fullUser = { ...cred.user, ...userData };
+    const userDados = await getUserData(uid);
+    const DadosDoUsuario = { uid, email, ...userDados };
 
-    setUser(fullUser);
-    await AsyncStorage.setItem("user", JSON.stringify(fullUser));
+    setUser(DadosDoUsuario);
+    await saveUser(DadosDoUsuario);
 
-    return fullUser;
-  };
+    return { success: true, message: "Seja Bem Vindo/a!" };
 
-  //Logout
-  const handleLogout = async () => {
-    await signOut(auth);
+  } catch (error) {
+    let msg = "";
+    switch (error.code) {
+      case "auth/user-not-found":
+        msg = "Usuário não encontrado.";
+        break;
+      case "auth/wrong-password":
+        msg = "Senha incorreta.";
+        break;
+      case "auth/invalid-email":
+        msg = "Formato de email inválido.";
+        break;
+      case "auth/user-disabled":
+        msg = "Esta conta foi desativada.";
+        break;
+      case "auth/too-many-requests":
+        msg = "Muitas tentativas. Tente novamente mais tarde.";
+        break;
+      default:
+        msg = "Erro ao entrar: " + error.message;
+    }
+
+    return { success: false, message: msg };
+  }
+}
+
+  async function signOut() {
+    await logoutOut();
     setUser(null);
-    await AsyncStorage.removeItem("user");
-  };
+    await removeUser();
+  }
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        login: handleLogin,
-        register: handleRegister,
-        logout: handleLogout,
-      }}
-    >
+    <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
+
+export const useAuth = () => useContext(AuthContext);

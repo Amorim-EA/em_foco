@@ -18,7 +18,7 @@ export default function Cadastro({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [cpf, setCpf] = useState('');
-  const [isSelected, setSelected] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [errorName, setErrorName] = useState('');
   const [errorEmail, setErrorEmail] = useState('');
   const [errorPassword, setErrorPassword] = useState('');
@@ -27,22 +27,24 @@ export default function Cadastro({ navigation }) {
   const handleCadastrar = async () => {
     if (validar()) {
       try {
-        const cred = await register(email, password);
-        const uid = cred.user.uid;
-        const newUser = {
-          uid,
+        setIsLoading(true)
+        const dadosUsuario = {
           name: name,
           email: email,
           password: password,
           cpf: cpf,
-          solicited: isSelected,
-          role: "cidadao"
         };
-        const response = await createUserData(newUser)
-        Alert.alert(response);
-        if(response == 'Cadastro realizado com sucesso!'){
-          navigation.navigate('Autenticar');
+        const response = await createUserData(dadosUsuario);
+        
+        if (!response.success) {
+          Alert.alert(response.message);
+        } else {
+          Alert.alert(response.message);
+          navigation.navigate('Autenticar', { email: email, password: password });
         }
+
+        setIsLoading(false);
+        
       } catch (error) {
         Alert.alert('Ocorreu um erro ao cadastrar. Tente novamente.');
         console.error(error);
@@ -131,21 +133,12 @@ export default function Cadastro({ navigation }) {
             styleInput={styles.input}
           />
 
-          <View style={styles.section}>
-              <Checkbox
-                  style={styles.checkbox}
-                  value={isSelected}
-                  onValueChange={() => {setSelected(!isSelected)}}
-                  color={isSelected ? '#28a745' : undefined}
-              />
-              <Text style={styles.paragraph}>Eu sou um agente!</Text>
-          </View>
-
           <Button
             texto="Me cadastrar"
             onPress={handleCadastrar}
             style={styles.buttongreen}
             textStyle={styles.buttonText}
+            disabled={isLoading}
           />
           <Button
             texto="Voltar ao inicio"

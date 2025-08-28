@@ -1,12 +1,12 @@
 import Button from '@/components/Button';
 import RenderizarMapa from '@/components/Mapa';
-import { AuthContext } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { getOneFoco, updateFoco } from '@/services/apiFoco';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function ConcluirFoco({ route, navigation }) {
-    const { user } = useContext(AuthContext);
+    const { user } = useAuth();
 
     const [descricao, setDescricao] = useState('');
     const [location, setLocation] = useState(null);

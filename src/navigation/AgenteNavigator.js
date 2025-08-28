@@ -1,9 +1,9 @@
-import { AuthContext } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import Contato from '@/screens/public/contato';
 import Sobre from '@/screens/public/sobre';
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import React, { useContext } from 'react';
+import React from 'react';
 import { Image } from 'react-native';
 import HomeNavigator from './HomeNavigator';
 import ListagemNavigator from './ListagemNavigator';
@@ -15,7 +15,7 @@ const LogoutComponent = () => {
 const Drawer = createDrawerNavigator();
 
 export default function AgenteNavigator() {
-		const { logout } = useContext(AuthContext);
+	const { signOut } = useAuth();
     return(
 				<Drawer.Navigator 
 					initialRouteName='Home'
@@ -83,7 +83,7 @@ export default function AgenteNavigator() {
 									drawerLabel: "Sair"
 								}}
                 listeners={{
-                    drawerItemPress: () => logout(),
+                    drawerItemPress: () => signOut(),
                 }} 
             />
 				</Drawer.Navigator>

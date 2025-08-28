@@ -2,12 +2,12 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { uploadImage } from "./storageService";
 
-const createFocoData = async (foco) => {
+export const createFocoData = async (foco) => {
   const url1 = await uploadImage(foco.imagem, `foco_${Date.now()}_1`);
 
   const docRef = await addDoc(collection(db, "focos"), {
-    usuario: foco.uid,
-    agente: '',
+    registradoBy: foco.uid,
+    resolvidoBy: '',
     titulo: foco.titulo,
     descricao: foco.descricao,
     localizacao: foco.localizacao,
@@ -19,14 +19,32 @@ const createFocoData = async (foco) => {
 
   return docRef.id;
 };
-
-const getAllFocos = async () => {
+ 
+export const getFocos = async (role, uid, cidade) => {
   try {
-    const querySnapshot = await getDocs(collection(db, "focos"));
-    return querySnapshot;
-  } catch (error) {
-    console.log(error)
-  }
-}
+    let focosQuery;
 
-export { createFocoData, getAllFocos };
+    if (role === "cidadao") {
+      focosQuery = query(
+        collection(db, "focos"),
+        where("registradoBy", "==", uid)
+      );
+    } else {
+      focosQuery = query(
+        collection(db, "focos"),
+        where("cidade", "==", cidade)
+      );
+    }
+
+    const querySnapshot = await getDocs(focosQuery);
+
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+  } catch (error) {
+    console.error("Erro ao buscar focos:", error);
+    return [];
+  }
+};

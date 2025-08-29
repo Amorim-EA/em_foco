@@ -35,7 +35,6 @@ export function AuthProvider({ children }) {
     await saveUser(DadosDoUsuario);
 
     return { success: true, message: "Seja Bem Vindo/a!" };
-
   } catch (error) {
     let msg = "";
     switch (error.code) {

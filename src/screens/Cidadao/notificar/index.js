@@ -5,10 +5,11 @@ import { AuthContext } from '@/contexts/AuthContext';
 import { createFocoData } from '@/services/focoServices';
 import { Feather } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
-import * as ImagePicker from 'expo-image-picker';
-import * as Location from 'expo-location';
+import { getCoordernadas, getAddressFromCoords } from './services/locationService';
 import React, { useContext, useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { TirarFoto, PegarFoto } from '@/services/imageService';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Notificar({ navigation }) {
     const { user } = useContext(AuthContext);
@@ -23,99 +24,34 @@ export default function Notificar({ navigation }) {
         latitudeDelta: 0.04,
         longitudeDelta: 0.04,
     });
-    
-    // Capturar Localização
-    async function solicitarPermissaoLocalizacao(){
-        const { status } = await Location.requestForegroundPermissionsAsync();
-    
-        if (status === 'granted') {
-          let userLocation = await Location.getCurrentPositionAsync({});
-          setLocation({
-              latitude: userLocation.coords.latitude,
-              longitude: userLocation.coords.longitude,
-          });
-          setRegion({
-              ...region,
-              latitude: userLocation.coords.latitude,
-              longitude: userLocation.coords.longitude,
-          });
-        } else {
-          Alert.alert(
-            'Permissão negada',
-            'Você precisa permitir a localização para acessar este recurso.',
-          );
-        }
-      };
-
-    const CapturarLocalizacao = async () => {
-        if (isSelected) {
-            console.log('Capturando localizacao!')
-            await solicitarPermissaoLocalizacao();
-            console.log(location)
-        } else {
-            console.log('Localizacao apagada!')
-            setLocation(null)
-        }
-    };
 
     useEffect(() => {
+        const CapturarLocalizacao = async () => {
+            if (isSelected) {
+                console.log('Capturando localizacao!');
+                const coords = await getCoordernadas();
+                setLocation(coords);
+                setRegion({...region, coords})
+                console.log(location);
+            } else {
+                console.log('Localizacao apagada!');
+                setLocation(null);
+            }
+        };
         CapturarLocalizacao();
     }, [isSelected]);
-    
-    const pickImage = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
-          aspect: [4, 3],
-          quality: 1,
-        });
-      
-        if (result.canceled) {
-          Alert.alert('Operação cancelada', 'Você cancelou a seleção de imagem.');
-          return;
-        }
-      
-        const asset = result.assets[0];
-        const filename = asset.uri.substring(asset.uri.lastIndexOf('/') + 1);
-        const extend = filename.split('.').pop();
-      
-        setImageFile({
-          name: filename,
-          uri: asset.uri,
-          type: 'image/' + extend,
-        });
-      };
 
-      const handlePickerCamera = async () => {
-        const permission = await ImagePicker.requestCameraPermissionsAsync();
-        if (!permission.granted) {
-          Alert.alert('Permissão negada para usar a câmera');
-          return;
-        }
-      
-        const result = await ImagePicker.launchCameraAsync({
-          allowsEditing: true,
-          aspect: [4, 3],
-          quality: 1,
-        });
-      
-        if (result.canceled) {
-          Alert.alert('Operação cancelada', 'Você cancelou a captura da imagem.');
-          return;
-        }
-      
-        const asset = result.assets[0];
-        const filename = asset.uri.substring(asset.uri.lastIndexOf('/') + 1);
-        const extend = filename.includes('.') ? filename.split('.').pop() : 'jpg';
-      
-        setImageFile({
-          name: filename,
-          uri: asset.uri,
-          type: 'image/' + extend,
-        });
-      };
+    const handlePickImage = async () => {
+        const foto = await PegarFoto();
+        setImageFile(foto);
+    }
 
-    function limparForm(){
+    const handletakePhoto = async () => {
+        const foto = await TirarFoto();
+        setImageFile(foto);
+    }
+
+    const limparForm = () => {
         setDescricao('');
         setLocation(null);
         setIsSelected(false);
@@ -137,29 +73,38 @@ export default function Notificar({ navigation }) {
         }
       
         setLoading(true);
+
+      try {
+        const isConnected = await checkConnection();
+
+        const cidade = isConnected ? await getAddressFromCoords(location) : user.cidade;
       
         const focoData = {
             usuario: user.uid,
             titulo,
             descricao,
-            localizacao: { latitude, longitude },
+            localizacao: location,
             imagem: imageFile.uri,
+            cidade,
         }
 
-        const id = await createFocoData(focoData);  
-        
+        const response = await createFocoData(focoData);  
+
+        if (!response.success) {
+            throw new Error('Erro ao criar foco');
+        }
+                
+        console.log("Foco cadastrado com sucesso! ID: " + response.id);
+        Alert.alert("Sucesso!", "Notificação enviada com sucesso. Agradecemos sua colaboração!");
+        limparForm();
+        navigation.navigate('Listagem');
+      } catch (error) {
+        Alert.alert('Erro ao enviar foco. Tente novamente.');
+        console.log("Ocorreu um erro ao enviar o foco:", error);
+      } finally {
         setLoading(false);
-        
-        console.log("Foco cadastrado com sucesso! ID: " + id);
-
-        if (result) {
-          Alert.alert('Foco enviado com sucesso!');
-          limparForm();
-          navigation.navigate('Listagem');
-        } else {
-          Alert.alert('Erro ao enviar foco. Tente novamente.');
-        }
-      };
+      }
+    }
 
     return (
         <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', backgroundColor: '#ecf0f1' }}>
@@ -185,6 +130,7 @@ export default function Notificar({ navigation }) {
                         onValueChange={() => {setIsSelected(!isSelected)}}
                         color={isSelected ? '#28a745' : undefined}
                     />
+                    <Ionicons name="location-sharp" size={24} color="white" />
                     <Text style={styles.paragraph}>Capturar minha localização</Text>
                 </View>
 
@@ -193,15 +139,15 @@ export default function Notificar({ navigation }) {
                 <View style={styles.containerCamera}>
                     <ButtonIcon
                         texto="Tirar foto"
-                        icon={<Feather name="camera" size={24} color="white" />}
-                        onPress={handlePickerCamera} 
+                        icon={<Ionicons name="camera" size={24} color="white" /> />}
+                        onPress={handletakePhoto} 
                         style={styles.buttonCameraBlue} 
                         textStyle={styles.buttonText} 
                     />
                     <ButtonIcon
                         texto="Fazer upload"
                         icon={<Feather name="upload" size={24} color="white" />}
-                        onPress={pickImage} 
+                        onPress={handlePickImage} 
                         style={styles.buttonCameraBlue}
                         textStyle={styles.buttonText} 
                     />
@@ -222,8 +168,9 @@ export default function Notificar({ navigation }) {
                 </View>
                             
                 <View style={styles.buttonWrapper}>
-                <Button
+                <ButtonIcon
                     texto={loading ? 'Enviando...' : 'Enviar'}
+                    icon={<Ionicons name="location-sharp" size={24} color="white" />}
                     onPress={handleNotificar}
                     disabled={loading}
                     style={styles.buttonEnviar}
@@ -232,10 +179,7 @@ export default function Notificar({ navigation }) {
                    <Button
                         texto="Cancelar" 
                         onPress={() => {
-                            setDescricao('');
-                            setIsSelected(false);
-                            setImageFile(null);
-                            setLocation(null);
+                            limparForm();
                         }}
                         style={styles.buttonCancelar} 
                         textStyle={styles.customText} 

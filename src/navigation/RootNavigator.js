@@ -40,29 +40,7 @@ export default function RootNavigator() {
         translucent={true}
         backgroundColor="transparent"
       />
-       {isLoading ? (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color="#1351b4" />
-        </View>
-        ) : (
-          !isConnected ? (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: 'white',
-              }}
-            >
-              <Text style={{ fontSize: 18, color: 'red', marginBottom: 10 }}>
-                Sem conexão com a internet
-              </Text>
-              <ActivityIndicator size="large" color="red" />
-            </View>
-          ) : (
-            <Navigator />
-          )
-        )}
+      <Navigator />
     </NavigationContainer>
   );
 }

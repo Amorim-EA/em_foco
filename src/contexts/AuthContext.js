@@ -1,5 +1,5 @@
-import React, { createContext, useEffect, useState } from "react";
-import { loginUser, logoutUser, reenviarEmailVerificacao } from "@/services/useService";
+import React, { createContext, useEffect, useState, useContext } from "react";
+import { loginUser, logoutUser } from "@/services/useService";
 import { getUserData } from "@/services/userService";
 import { saveUser, getUser, removeUser } from "@/services/storageService";
 
@@ -20,7 +20,7 @@ export function AuthProvider({ children }) {
 
   async function signIn(email, senha) {
   try {
-    const cred = await login(email, senha);
+    const cred = await loginUser(email, senha);
     const firebaseUser = cred.user;
     const uid = firebaseUser.uid;
 
@@ -62,7 +62,7 @@ export function AuthProvider({ children }) {
 }
 
   async function signOut() {
-    await logoutOut();
+    await logoutUser();
     setUser(null);
     await removeUser();
   }

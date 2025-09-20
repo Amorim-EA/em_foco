@@ -1,4 +1,5 @@
 import Button from '@/components/Button';
+import { reenviarEmailVerificacao } from "@/services/useService";
 import { useAuth } from '@/contexts/AuthContext';
 import React, { useState } from 'react';
 import { ImageBackground, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -14,6 +15,7 @@ export default function Autenticar({ route }) {
   const { signIn } = useAuth()
   
   const handleLogin = async () => {
+    e.preventDefault();
     if (validar()) {
       try {
         setIsLoading(true);

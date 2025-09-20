@@ -1,3 +1,5 @@
+import NetInfo from "@react-native-community/netinfo";
+
 export function validarCPF(cpf) {
   cpf = cpf.replace(/[^\d]+/g, '');
   if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
@@ -15,3 +17,13 @@ export function validarCPF(cpf) {
 
   return resto === parseInt(cpf[10]);
 }
+
+export const checkConnection = async () => {
+  try {
+    const state = await NetInfo.fetch();
+    return state.isConnected;
+  } catch (error) {
+    console.error("Erro ao verificar conexão:", error);
+    return false;
+  }
+};

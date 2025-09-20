@@ -1,8 +1,3 @@
-import Button from '@/components/Button';
-import InputText from '@/components/InputText';
-import { createUserData } from '@/services/userServices';
-import validarCPF from '@/services/utils';
-import Checkbox from 'expo-checkbox';
 import React, { useState } from 'react';
 import {
   Alert,
@@ -12,6 +7,10 @@ import {
   Text,
   View
 } from 'react-native';
+import Button from '@/components/Button';
+import InputText from '@/components/InputText';
+import { createUserData } from '@/services/userServices';
+import { validarCPF, checkConnection } from "./services/utils";
 
 export default function Cadastro({ navigation }) {
   const [name, setName] = useState('');
@@ -24,33 +23,45 @@ export default function Cadastro({ navigation }) {
   const [errorPassword, setErrorPassword] = useState('');
   const [errorCpf, setErrorCpf] = useState('');
 
-  const handleCadastrar = async () => {
-    if (validar()) {
-      try {
-        setIsLoading(true)
-        const dadosUsuario = {
-          name: name,
-          email: email,
-          password: password,
-          cpf: cpf,
-        };
-        const response = await createUserData(dadosUsuario);
-        
-        if (!response.success) {
-          Alert.alert(response.message);
-        } else {
-          Alert.alert(response.message);
-          navigation.navigate('Autenticar', { email: email, password: password });
-        }
-
-        setIsLoading(false);
-        
-      } catch (error) {
-        Alert.alert('Ocorreu um erro ao cadastrar. Tente novamente.');
-        console.error(error);
-      }
-    }
+  const showAlert = (title, message) => {
+    Alert.alert(title, message);
   };
+
+  const handleCadastrar = async () => {
+    setIsLoading(true)
+    
+    try {
+      const isConnected = await checkConnection();
+      if (!isConnected) {
+        showAlert("Sem conexão", "Verifique sua internet e tente novamente.");
+        return;
+      }
+
+      if (!validar()) return;
+
+      const dadosUsuario = {
+        name: name,
+        email: email,
+        password: password,
+        cpf: cpf,
+      };
+      const response = await createUserData(dadosUsuario);
+      
+      if (response.success) {
+        showAlert("Sucesso", response.message);
+        navigation.navigate('Autenticar', { email: email, password: password });
+      } else {
+        showAlert("Erro", response.message);
+      }
+
+    } catch (error) {
+      setIsLoading(false); 
+      showAlert("Erro", "Ocorreu um erro ao cadastrar. Tente novamente.");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+};
 
   const validar = () => {
     let error = false;

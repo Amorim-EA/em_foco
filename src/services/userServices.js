@@ -2,6 +2,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { signInWithEmailAndPassword, signOut, sendEmailVerification } from "firebase/auth";
 import { auth } from "./firebaseConfig";
+import { getCoordernadas, getAddressFromCoords } from "./services/localizationService";
 
 export const createUserData = async (user) => {
   try {
@@ -15,6 +16,8 @@ export const createUserData = async (user) => {
 
     await sendEmailVerification(cred.user);
 
+    const localizacao = await getCoordernadas();
+
     const uid = cred.user.uid;
     const newUser = {
       uid,
@@ -22,7 +25,8 @@ export const createUserData = async (user) => {
       email: user.email,
       password: user.password,
       cpf: user.cpf,
-      role: "cidadao"
+      role: "cidadao",
+      cidade: getAddressFromCoords(localizacao)
     };
     await setDoc(doc(db, "usuarios", uid), {
       ...newUser,

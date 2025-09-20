@@ -1,11 +1,11 @@
 import { useAuth } from '@/contexts/AuthContext';
-import Notificar from '@/screens/Cidadao/notificar';
+import Notificar from '@/screens/private/Cidadao/notificar';
 import Listagem from '@/screens/private/Listagem';
 import Contato from '@/screens/public/contato';
 import Sobre from '@/screens/public/sobre';
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import React, { useContext } from 'react';
+import React from 'react';
 import { Image } from 'react-native';
 import HomeNavigator from './HomeNavigator';
 

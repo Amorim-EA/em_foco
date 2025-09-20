@@ -1,4 +1,4 @@
-import ConcluirFoco from '@/screens/Agente/ConcluirFoco';
+import ConcluirFoco from '@/screens/private/ConcluirFoco';
 import Listagem from '@/screens/private/Listagem';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
